@@ -1,0 +1,157 @@
+// Interface text that lives in components rather than in src/data/mock.js.
+// Plural-aware entries are objects ({ one, few, many, other }); see i18n/format.js.
+export const ui = {
+  meta: {
+    homeTitle: "Çınarlı Park",
+    homeDescription:
+      "Çinarlı Park - ailə həyatı, yaşıl həyət və rahat şəhər əlaqəsinin balansını yaradan yaşayış kompleksi.",
+    apartmentsTitle: "Mənzilini seç | Çınarlı Park",
+    contactTitle: "Əlaqə | Çınarlı Park",
+    apartmentTitle: "{id} | Çınarlı Park",
+    apartmentNotFound: "Mənzil tapılmadı | Çınarlı Park",
+  },
+  common: {
+    rooms: { other: "{count} otaq" },
+    minutes: { other: "{count} dəq" },
+    months: { other: "{count} ay" },
+    area: "{value} m²",
+  },
+  nav: {
+    items: {
+      layihe: "Layihə",
+      menziller: "Mənzillər",
+      ustunlukler: "Üstünlüklər",
+      yerlesme: "Yerləşmə",
+      qalereya: "Qalereya",
+    },
+    consult: "Məsləhət al",
+    menu: "Menu",
+    close: "Bağla",
+    menuLabel: "Menyu",
+    call: "Zəng et",
+    language: "Dil",
+  },
+  hero: {
+    imageAlt: "Çınarlı Park yaşayış kompleksi",
+    titleLines: ["Şəhərin içində.", "Təbiətə daha yaxın."],
+    description:
+      "Çinarlı Park - ailə həyatı, yaşıl həyət və rahat şəhər əlaqəsinin balansını yaradan yaşayış kompleksi.",
+    primary: "Mənzil seç",
+    secondary: "Layihəyə bax",
+  },
+  quickSearch: {
+    rooms: "Otaq sayı",
+    area: "Sahə",
+    floor: "Mərtəbə",
+    all: "Hamısı",
+  },
+  overview: {
+    imageAlt: "Çınarlı Park binaları",
+    apartmentsButton: "Mənzillərə bax",
+    locationButton: "Yerləşmə",
+  },
+  advantages: {
+    imageAlt: "Ağaclar arasında müasir yaşayış binası",
+  },
+  location: {
+    mapTitle: "Çınarlı Park xəritədə — {address}",
+  },
+  gallery: {
+    photos: "foto",
+    videos: "video",
+    back: "Ana səhifə",
+    all: "Hamısı",
+    filter: "Kateqoriya üzrə filtr",
+    open: "Fotonu böyüt",
+    close: "Bağla",
+    previous: "Əvvəlki foto",
+    next: "Növbəti foto",
+  },
+  construction: {
+    imageAlt: "Tikinti gedən yaşayış binası",
+  },
+  payment: {
+    price: "Mənzil dəyəri",
+    downPayment: "İlkin ödəniş",
+    term: "Müddət",
+    monthsUnit: "ay",
+    calculate: "Hesabla",
+    monthly: "aylıq ödəniş",
+    remaining: "Qalıq məbləğ",
+    talkToManager: "Satış meneceri ilə danış",
+  },
+  apartments: {
+    floorSummary: { other: "{count} mərtəbə" },
+    filters: "Filtrlər",
+    view: "Bax",
+    selected: "Seçilmiş mənzil",
+    floor: "Mərtəbə",
+    balcony: "Balkon",
+    renovation: "Təmir",
+    status: "Status",
+    apply: "Bu mənzil üzrə müraciət",
+    emptyTitle: "Seçilmiş filtrlərə uyğun mənzil tapılmadı",
+    emptyText: "Filtrləri dəyişin və ya sıfırlayın.",
+    reset: "Filtrləri sıfırla",
+  },
+  planCard: {
+    roomsWord: { other: "OTAQLI" },
+    planAlt: "{count} otaqlı mənzilin planı",
+  },
+  apartment: {
+    back: "Mənzillər",
+    roomsTitle: "{count} otaqlı mənzil",
+    unit: "Mənzil {unit}",
+    about: "Mənzil haqqında",
+    totalArea: "Ümumi sahə",
+    others: "Digər mənzillər",
+    paymentTitle: "Ödənişini hesabla",
+    calculator: "Ödəniş kalkulyatoru",
+    talkToManager: "Satış meneceri ilə danış",
+  },
+  leadBar: {
+    title: "Bu mənzili bəyəndiniz?",
+    text: "Telefon nömrənizi yazın - komandamız sizinlə əlaqə saxlasın.",
+    phoneLabel: "Telefon nömrəsi",
+    submit: "Göndər",
+    close: "Bağla",
+  },
+  mobileBar: {
+    call: "Zəng",
+    primary: "Mənzil seç",
+  },
+  contact: {
+    back: "Ana səhifə",
+  },
+  footer: {
+    navLabel: "Sayt keçidləri",
+  },
+  seo: {
+    ogLocale: "az_AZ",
+    apartmentTitle:
+      "{rooms} otaqlı mənzil, {area} m² — Bina {building}, {floorOrdinal} mərtəbə",
+    apartmentDescription:
+      "{siteName}-da {rooms} otaqlı, {area} m² sahəli mənzil: Bina {building}, {floorOrdinal} mərtəbə, {balconies} balkon, təmir: {renovation}. Status: {status}. Plan və otaqların sahələri.",
+    breadcrumbHome: "Ana səhifə",
+    breadcrumbApartments: "Mənzillər",
+    breadcrumbContact: "Əlaqə",
+    breadcrumbGallery: "Qalereya",
+    ogSubtitle: "{location} · yeni yaşayış kompleksi",
+    ogButton: "MƏNZİL SEÇ",
+    ogApartmentMeta: "Bina {building} · {floorOrdinal} mərtəbə · Mənzil {unit}",
+  },
+  notFound: {
+    title: "Səhifə tapılmadı.",
+    text: "Axtardığınız səhifə mövcud deyil və ya başqa ünvana köçürülüb.",
+    metaTitle: "Səhifə tapılmadı",
+    home: "Ana səhifə",
+    apartments: "Mənzillər",
+    contact: "Əlaqə",
+  },
+  leadForm: {
+    invalidPhone: "Nömrəni tam daxil edin, məsələn: 50 123 45 67.",
+    failed: "Göndərmək alınmadı. Bir az sonra yenidən cəhd edin.",
+    sending: "Göndərilir…",
+    sendAnother: "Başqa nömrə göndər",
+  },
+};
