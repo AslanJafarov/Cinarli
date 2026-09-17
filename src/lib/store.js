@@ -20,8 +20,8 @@ export const MEDIA_NAME = /^[a-f0-9-]{36}\.webp$/;
 
 /**
  * mode "mock": the site shows src/data/mock.js, as before the admin panel saved anything.
- * mode "production": the site shows the saved data. Apartments and gallery photos start empty;
- * text sections the admin hasn't saved yet fall back to the texts in mock.js.
+ * mode "production": the site shows the saved data. Apartments start empty; every other section
+ * the admin hasn't saved yet (texts, section photos, gallery, news) falls back to mock.js.
  */
 const emptyStore = { mode: "mock", data: {}, translations: {}, savedAt: null };
 
@@ -65,15 +65,9 @@ async function writeStore(store) {
   await fs.promises.rename(temp, storeFile);
 }
 
-// Production data with empty apartments and gallery; only known sections are kept.
+// Production data with empty apartments; only known sections are kept.
 export function productionData(saved = {}) {
-  const data = {
-    ...mockData,
-    apartments: [],
-    news: [],
-    siteImages: { hero: null, project: null, advantages: null, construction: null },
-    gallery: { ...mockData.gallery, images: [], photos: [], photoCount: 0, videoCount: 0 },
-  };
+  const data = { ...mockData, apartments: [] };
   for (const key of Object.keys(mockData)) {
     if (key in saved) data[key] = saved[key];
   }
