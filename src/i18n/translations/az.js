@@ -43,7 +43,6 @@ export const ui = {
     rooms: "Otaq sayı",
     area: "Sahə",
     floor: "Mərtəbə",
-    all: "Hamısı",
   },
   overview: {
     imageAlt: "Çınarlı Park binaları",
@@ -55,6 +54,14 @@ export const ui = {
   },
   location: {
     mapTitle: "Çınarlı Park xəritədə — {address}",
+  },
+  empty: {
+    noApartmentsTitle: "Hazırda satışda mənzil yoxdur",
+    noApartmentsText: "Yeni mənzillər tezliklə əlavə olunacaq. Satış ofisimizlə əlaqə saxlayın — mənzillər satışa çıxanda sizə ilk xəbər verək.",
+    noPhotosTitle: "Fotolar tezliklə əlavə olunacaq",
+    noPhotosText: "Layihənin fotolarını hazırlayırıq. Ətraflı məlumat üçün satış ofisimizlə əlaqə saxlayın.",
+    contact: "Bizimlə əlaqə",
+    call: "Zəng et",
   },
   gallery: {
     photos: "foto",
@@ -97,6 +104,7 @@ export const ui = {
   planCard: {
     roomsWord: { other: "OTAQLI" },
     planAlt: "{count} otaqlı mənzilin planı",
+    planSoon: "Plan tezliklə əlavə olunacaq",
   },
   apartment: {
     back: "Mənzillər",
@@ -109,7 +117,21 @@ export const ui = {
     calculator: "Ödəniş kalkulyatoru",
     talkToManager: "Satış meneceri ilə danış",
   },
+  // Shown under every form that asks for a phone number (personal data consent).
+  consent: "“Göndər” düyməsini basmaqla telefon nömrənizin satış komandamız tərəfindən sizinlə əlaqə saxlamaq üçün istifadəsinə razılıq verirsiniz.",
+  news: {
+    title: "Xəbərlər",
+    subtitle: "Tikintinin gedişi, satış ofisi və layihə ilə bağlı son yeniliklər.",
+    readMore: "Ətraflı",
+    back: "Bütün xəbərlər",
+    others: "Digər xəbərlər",
+    emptyTitle: "Hələ xəbər yoxdur",
+    emptyText: "Layihə ilə bağlı yeniliklər tezliklə burada paylaşılacaq.",
+    breadcrumb: "Xəbərlər",
+    allUpdates: "Bütün yeniliklər",
+  },
   leadBar: {
+    success: "Təşəkkürlər! Tezliklə sizə zəng edəcəyik.",
     title: "Bu mənzili bəyəndiniz?",
     text: "Telefon nömrənizi yazın - komandamız sizinlə əlaqə saxlasın.",
     phoneLabel: "Telefon nömrəsi",

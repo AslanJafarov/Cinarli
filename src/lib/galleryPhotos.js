@@ -48,3 +48,21 @@ export const galleryImageFiles = {
   kitchenGalley,
   dining,
 };
+
+/**
+ * Image for a gallery photo: a built-in file by `key`, or an admin upload
+ * ({ src, width, height } served from /media). Null when neither exists.
+ */
+export function photoImage(photo) {
+  if (photo?.src && photo.width && photo.height) {
+    return { src: photo.src, width: photo.width, height: photo.height };
+  }
+  return galleryImageFiles[photo?.key] ?? null;
+}
+
+// Built-in files carry a tiny blurred preview; uploads don't.
+export const blurPlaceholder = (image) => (image?.blurDataURL ? "blur" : "empty");
+
+/** Photos that have an image, each with its `image` attached. */
+export const photosWithImages = (photos = []) =>
+  photos.map((photo) => ({ ...photo, image: photoImage(photo) })).filter((photo) => photo.image);

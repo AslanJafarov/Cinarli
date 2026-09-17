@@ -5,7 +5,8 @@ import JsonLd from "@/components/JsonLd";
 import Navbar from "@/components/Navbar";
 import { localizeHref } from "@/i18n/config";
 import { getContent } from "@/i18n/content";
-import { galleryImageFiles } from "@/lib/galleryPhotos";
+import EmptyNotice from "@/components/EmptyNotice";
+import { photosWithImages } from "@/lib/galleryPhotos";
 import { breadcrumbJsonLd, imageGalleryJsonLd, pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
@@ -20,9 +21,7 @@ const page = async ({ params }) => {
   const { gallery, ui } = getContent(lang);
 
   // Photos whose file is missing are skipped instead of breaking the page.
-  const photos = gallery.photos
-    .filter((photo) => galleryImageFiles[photo.key])
-    .map((photo) => ({ ...photo, image: galleryImageFiles[photo.key] }));
+  const photos = photosWithImages(gallery.photos);
 
   return (
     <>
@@ -52,7 +51,17 @@ const page = async ({ params }) => {
           {gallery.pageSubtitle}
         </p>
 
-        <GalleryGrid photos={photos} categories={gallery.categories} labels={ui.gallery} />
+        {photos.length > 0 ? (
+          <GalleryGrid photos={photos} categories={gallery.categories} labels={ui.gallery} />
+        ) : (
+          <EmptyNotice
+            icon="photo"
+            title={ui.empty.noPhotosTitle}
+            text={ui.empty.noPhotosText}
+            actions={[{ href: localizeHref(lang, "/elaqe"), label: ui.empty.contact, primary: true }]}
+            className="mt-[clamp(24px,2.6vw,52px)]"
+          />
+        )}
       </main>
       <Footer />
       <JsonLd

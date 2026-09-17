@@ -44,7 +44,6 @@ const en = {
       rooms: "Rooms",
       area: "Area",
       floor: "Floor",
-      all: "All",
     },
     overview: {
       imageAlt: "Çınarlı Park buildings",
@@ -56,6 +55,14 @@ const en = {
     },
     location: {
       mapTitle: "Çınarlı Park on the map — {address}",
+    },
+    empty: {
+      noApartmentsTitle: "No apartments are available right now",
+      noApartmentsText: "New apartments will be listed soon. Get in touch with our sales office and we'll let you know first when they go on sale.",
+      noPhotosTitle: "Photos are coming soon",
+      noPhotosText: "We're preparing photos of the project. Contact our sales office for details.",
+      contact: "Contact us",
+      call: "Call us",
     },
     gallery: {
       photos: "photos",
@@ -98,6 +105,7 @@ const en = {
     planCard: {
       roomsWord: { one: "ROOM", other: "ROOMS" },
       planAlt: "Floor plan of a {count}-room apartment",
+      planSoon: "Floor plan coming soon",
     },
     apartment: {
       back: "Apartments",
@@ -110,7 +118,21 @@ const en = {
       calculator: "Payment calculator",
       talkToManager: "Talk to a sales manager",
     },
+    // Shown under every form that asks for a phone number (personal data consent).
+    consent: "By pressing “Send”, you agree that our sales team may use your phone number to contact you.",
+    news: {
+      title: "News",
+      subtitle: "Construction progress, the sales office and the latest project updates.",
+      readMore: "Read more",
+      back: "All news",
+      others: "More news",
+      emptyTitle: "No news yet",
+      emptyText: "Project updates will be shared here soon.",
+      breadcrumb: "News",
+      allUpdates: "All updates",
+    },
     leadBar: {
+      success: "Thank you! We'll call you shortly.",
       title: "Like this apartment?",
       text: "Leave your phone number and our team will get in touch.",
       phoneLabel: "Phone number",
@@ -433,6 +455,7 @@ const en = {
       { label: "Project" },
       { label: "Apartments" },
       { label: "Gallery" },
+      { label: "News" },
       { label: "Contact" },
       {},
       {},
@@ -456,6 +479,10 @@ const en = {
       title: "Contact — sales office",
       description:
         "Çınarlı Park sales office: phone, WhatsApp, opening hours and address. FAQs about price, down payment and reservations.",
+    },
+    news: {
+      "title": "News — construction and project updates",
+      "description": "The latest from Çınarlı Park: construction progress, the sales office and project updates."
     },
     gallery: {
       title: "Gallery — project photos",
@@ -489,6 +516,24 @@ const en = {
       },
     ],
   },
+  // Same order as news in src/data/mock.js.
+  news: [
+    {
+      "title": "Façade works have started in Building B",
+      "summary": "With the structural frame complete, installation of the façade cladding and window systems has begun in Building B.",
+      "body": "The structural frame of Building B was completed at the end of August, and façade works began in the first week of September. The façade uses the natural-toned cladding materials specified in the design.\n\nAt the same time, window installation and interior utility works continue in the building. You can follow construction progress in the “Construction” section of the website."
+    },
+    {
+      "title": "The sales office is now open at weekends",
+      "summary": "Our sales office now welcomes visitors on Saturdays and Sundays for apartment viewings and consultations.",
+      "body": "To make things easier for buyers, the sales office has extended its opening hours. It is open 10:00–19:00 on weekdays and 11:00–17:00 on Saturdays and Sundays.\n\nTo book a meeting in advance, leave your number in the form on the website or give us a call."
+    },
+    {
+      "title": "Underground parking works reach 92%",
+      "summary": "Structural works on the two-level underground car park are almost complete.",
+      "body": "Concrete and waterproofing works are nearly finished in the two-level car park beneath the complex. Ventilation, lighting and security systems will be installed next.\n\nThanks to the car park, the courtyard stays completely car-free — a safer and calmer environment for children and families."
+    }
+  ],
 };
 
 export default en;

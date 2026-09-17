@@ -1,14 +1,16 @@
 import Image from "next/image";
-import advantagesVilla from "../assets/advantages-villa.jpg";
 import { getI18n } from "../i18n/server";
+import { siteImage } from "../lib/siteImages";
 
 export default async function Advantages() {
   const { content } = await getI18n();
   const { titleLines, description, highlight, items } = content.advantages;
+  const photo = siteImage(content.siteImages, "advantages");
 
   return (
     <section
       id="ustunlukler"
+      data-admin-preview="advantages"
       className="w-full scroll-mt-(--nav-h) bg-[#f3f0e9] pb-[clamp(56px,7vw,134px)] px-page pt-[clamp(48px,4vw,76px)] text-[#1a2a22]"
     >
       {/* Heading */}
@@ -28,13 +30,15 @@ export default async function Advantages() {
       <div className="mt-[clamp(28px,2.75vw,52px)] grid gap-[clamp(16px,3.15vw,60px)] lg:grid-cols-[41.1vw_minmax(0,1fr)] lg:items-start">
         {/* Image card */}
         <figure className="group relative isolate cursor-pointer aspect-[822/648] transform-gpu w-full max-w-full overflow-hidden rounded-[clamp(18px,1.6vw,30px)] bg-[#dcd9d3] max-sm:aspect-[4/5]">
+          {photo && (
           <Image
-            src={advantagesVilla}
+            src={photo.image}
             alt={content.ui.advantages.imageAlt}
-            placeholder="blur"
+            placeholder={photo.uploaded ? "empty" : "blur"}
             sizes="(min-width: 1024px) 42vw, 100vw"
             className="absolute inset-0 h-full w-full object-cover object-[center_28%] transition-[scale] duration-[1400ms] ease-butter will-change-transform group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
+          )}
 
           <figcaption className="absolute inset-x-0 bottom-0 flex h-[40%] flex-col bg-[#1e3a2b]/90 px-[clamp(20px,2.35vw,44px)] pt-[clamp(20px,2.4vw,46px)] text-white max-sm:h-auto max-sm:pb-6">
             <h3 className="text-[clamp(20px,1.85vw,35px)] leading-tight transition-[translate] duration-[1400ms] ease-butter group-hover:-translate-y-[0.2em] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">

@@ -19,7 +19,7 @@ export default async function ProjectHighlights() {
   const { projectFeatures, projectStats } = content;
 
   return (
-    <section className="w-full bg-[#f1f0ec] px-page pb-[clamp(40px,3.8vw,72px)] pt-[clamp(40px,3.8vw,72px)]">
+    <section data-admin-preview="projectStats projectFeatures" className="w-full bg-[#f1f0ec] px-page pb-[clamp(40px,3.8vw,72px)] pt-[clamp(40px,3.8vw,72px)]">
       {/* Key numbers */}
       {/* Same 3-column grid and gap as the cards below, so the numbers start on the card edges;
           the last column holds the remaining numbers, the final one ending at the right edge. */}

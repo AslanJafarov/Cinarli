@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { blurPlaceholder } from "../lib/galleryPhotos";
 
 const SWIPE_DISTANCE = 50;
 
@@ -112,7 +113,7 @@ export default function GalleryGrid({ photos, categories, labels }) {
               <Image
                 src={photo.image}
                 alt={photo.alt}
-                placeholder="blur"
+                placeholder={blurPlaceholder(photo.image)}
                 sizes="(min-width: 1280px) 22vw, (min-width: 768px) 30vw, 46vw"
                 className="block h-auto w-full transition-[scale] duration-[900ms] ease-butter group-hover:scale-[1.04] motion-reduce:transition-none"
               />
@@ -182,7 +183,7 @@ export default function GalleryGrid({ photos, categories, labels }) {
                 key={current.key}
                 src={current.image}
                 alt={current.alt}
-                placeholder="blur"
+                placeholder={blurPlaceholder(current.image)}
                 sizes="90vw"
                 className="h-auto max-h-[calc(100%-3rem)] w-auto max-w-full animate-rise-in rounded-[clamp(10px,1vw,18px)] object-contain motion-reduce:animate-none"
               />

@@ -3,7 +3,6 @@ import ApartmentDetail from "@/components/ApartmentDetail";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import Navbar from "@/components/Navbar";
-import { apartments } from "@/data/mock";
 import { localizeHref } from "@/i18n/config";
 import { getContent } from "@/i18n/content";
 import {
@@ -18,8 +17,9 @@ import {
 const findApartment = (lang, id) =>
   getContent(lang).apartments.find((apartment) => apartment.id === id);
 
-export function generateStaticParams() {
-  return apartments.map(({ id }) => ({ id }));
+// Apartments added later in the admin panel are rendered on their first visit.
+export function generateStaticParams({ params }) {
+  return getContent(params.lang).apartments.map(({ id }) => ({ id }));
 }
 
 export async function generateMetadata({ params }) {

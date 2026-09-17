@@ -41,7 +41,7 @@ export default async function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="w-full border-t border-[#16201b]/8 bg-[#f6f4ef] px-page pb-[clamp(28px,2.6vw,52px)] pt-[clamp(48px,4.4vw,88px)] text-[#16201b]">
+    <footer data-admin-preview="footer" className="w-full border-t border-[#16201b]/8 bg-[#f6f4ef] px-page pb-[clamp(28px,2.6vw,52px)] pt-[clamp(48px,4.4vw,88px)] text-[#16201b]">
       <div className="grid gap-[clamp(40px,5vw,100px)] lg:grid-cols-[minmax(0,1fr)_39vw]">
         <div>
           <p className="text-[clamp(28px,2.75vw,56px)] leading-[1.15]">{title}</p>
@@ -67,7 +67,7 @@ export default async function Footer() {
           </div>
         </div>
 
-        <FooterLeadForm {...form} messages={ui.leadForm} locale={locale} />
+        <FooterLeadForm {...form} messages={ui.leadForm} consent={ui.consent} locale={locale} />
       </div>
 
       <nav

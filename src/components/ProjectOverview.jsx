@@ -1,17 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
-import heroBuilding from "../assets/hero-building.jpg";
 import { localizeHref } from "../i18n/config";
 import { getI18n } from "../i18n/server";
+import { siteImage } from "../lib/siteImages";
 
 export default async function ProjectOverview() {
   const { locale, content } = await getI18n();
   const { titleLines, description, stats, features } = content.projectOverview;
   const t = content.ui.overview;
+  const photo = siteImage(content.siteImages, "project");
 
   return (
     <section
       id="layihe"
+      data-admin-preview="projectOverview"
       className="w-full scroll-mt-(--nav-h) bg-[#f3f0e9] px-page pb-[clamp(48px,5.7vw,110px)] pt-[clamp(20px,1.6vw,32px)] text-[#1a2a22] max-md:pb-14 max-md:pt-10"
     >
       {/* Intro + image */}
@@ -29,11 +31,11 @@ export default async function ProjectOverview() {
             {description}
           </p>
 
-          <dl className="mt-[clamp(32px,5.2vw,100px)] grid grid-cols-2 gap-y-6 sm:grid-cols-4">
+          <dl className="mt-[clamp(32px,5.2vw,100px)] grid grid-cols-2 gap-x-[clamp(20px,2vw,40px)] gap-y-6 sm:grid-cols-[repeat(4,auto)] sm:justify-between">
             {stats.map((stat) => (
               <div key={stat.label}>
                 <dt className="sr-only">{stat.label}</dt>
-                <dd className="text-[clamp(24px,2.3vw,44px)] font-medium leading-tight text-[#2a5a40]">
+                <dd className="text-[clamp(24px,2.3vw,44px)] font-medium leading-tight whitespace-nowrap text-[#2a5a40]">
                   {stat.value}
                 </dd>
                 <dd className="mt-[0.35em] text-[clamp(12px,0.92vw,17px)] text-[#6c6b65]">
@@ -45,14 +47,30 @@ export default async function ProjectOverview() {
         </div>
 
         {/* Image card */}
-        <div className="relative aspect-[855/518] w-full max-w-full overflow-hidden rounded-[clamp(18px,2vw,38px)] bg-[#3f7fc4]">
-          <Image
-            src={heroBuilding}
-            alt={t.imageAlt}
-            placeholder="blur"
-            sizes="(min-width: 1024px) 64vw, 150vw"
-            className="absolute left-[-33%] top-[-5%] h-auto w-[148%] max-w-none"
-          />
+        <div
+          className={`relative aspect-[855/518] w-full max-w-full overflow-hidden rounded-[clamp(18px,2vw,38px)] ${
+            photo ? "bg-[#3f7fc4]" : "bg-[#24503a]"
+          }`}
+        >
+          {/* The sample photo is shifted to frame its tower; uploads fill the card */}
+          {photo?.uploaded && (
+            <Image
+              src={photo.image}
+              alt={t.imageAlt}
+              fill
+              sizes="(min-width: 1024px) 43vw, 100vw"
+              className="object-cover"
+            />
+          )}
+          {photo && !photo.uploaded && (
+            <Image
+              src={photo.image}
+              alt={t.imageAlt}
+              placeholder="blur"
+              sizes="(min-width: 1024px) 64vw, 150vw"
+              className="absolute left-[-33%] top-[-5%] h-auto w-[148%] max-w-none"
+            />
+          )}
           <svg
             aria-hidden="true"
             className="absolute inset-0 h-full w-full"

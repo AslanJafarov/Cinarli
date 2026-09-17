@@ -22,6 +22,14 @@ export const projectFeatures = [
   },
 ];
 
+// Large photos of the home page sections; see src/lib/siteImages.js. "built-in" = sample photo.
+export const siteImages = {
+  hero: "built-in",
+  project: "built-in",
+  advantages: "built-in",
+  construction: "built-in",
+};
+
 export const apartmentPage = {
   title: "Mənzilini seç",
   subtitle: "Mövcud mənzilləri rahat şəkildə filtrlə və müqayisə et.",
@@ -413,7 +421,7 @@ export const constructionProgress = {
   allUpdatesLabel: "Bütün yeniliklər",
 };
 
-// Mobile home: card under the hero; its rows come from apartmentFilters' defaults.
+// Home: search card under the hero; its fields are the rooms, area and floor apartmentFilters.
 export const quickSearch = {
   title: "Sürətli mənzil axtarışı",
   buttonLabel: "Mövcud mənzilləri göstər",
@@ -442,11 +450,48 @@ export const footer = {
     { label: "Layihə", href: "/#layihe" },
     { label: "Mənzillər", href: "/menziller" },
     { label: "Qalereya", href: "/#qalereya" },
+    { label: "Xəbərlər", href: "/xeberler" },
     { label: "Əlaqə", href: "/elaqe" },
     { label: contactPage.office.details[0].value, href: contactPage.office.phoneHref },
     { label: "WhatsApp", href: contactPage.office.whatsappHref },
   ],
 };
+
+// News page (/xeberler). `id` is the page address, `date` is YYYY-MM-DD, paragraphs in `body`
+// are separated by an empty line. `cover`: an upload ({ src, width, height }) or { key } of a
+// photo in src/lib/galleryPhotos.js.
+export const news = [
+  {
+    "id": "korpus-b-fasad-isleri",
+    "date": "2026-09-10",
+    "title": "Korpus B-də fasad işlərinə başlanıldı",
+    "summary": "Karkas işləri tamamlanan Korpus B-də fasad örtüyü və pəncərə sistemlərinin quraşdırılmasına başlanıldı.",
+    "body": "Korpus B-nin karkas işləri avqustun sonunda tamamlandı və sentyabrın ilk həftəsindən fasad işlərinə keçildi. Fasadda layihədə nəzərdə tutulan təbii tonlu örtük materialları istifadə olunur.\n\nEyni zamanda binada pəncərə sistemlərinin quraşdırılması və daxili kommunikasiya xətlərinin çəkilişi davam edir. Tikintinin gedişini saytın “Tikinti” bölməsində izləyə bilərsiniz.",
+    "cover": {
+      "key": "exteriorTerraces"
+    }
+  },
+  {
+    "id": "satis-ofisi-hefte-sonu",
+    "date": "2026-08-22",
+    "title": "Satış ofisi artıq həftə sonu da açıqdır",
+    "summary": "Mənzillərə baxış və məsləhət üçün satış ofisimiz şənbə və bazar günləri də qonaqları qəbul edir.",
+    "body": "Alıcıların rahatlığı üçün satış ofisinin iş qrafiki genişləndirildi. Ofis həftə içi 10:00–19:00, şənbə və bazar günləri isə 11:00–17:00 saatlarında açıqdır.\n\nGörüşü əvvəlcədən təyin etmək üçün saytdakı formadan nömrənizi göndərin və ya bizə zəng edin.",
+    "cover": {
+      "key": "interior"
+    }
+  },
+  {
+    "id": "yeralti-parkinq-92-faiz",
+    "date": "2026-07-30",
+    "title": "Yeraltı parkinqdə işlər 92%-ə çatdı",
+    "summary": "İki mərtəbəli yeraltı parkinqin konstruktiv işləri demək olar ki, başa çatıb.",
+    "body": "Kompleksin altında yerləşən iki mərtəbəli parkinqdə beton və izolyasiya işləri yekunlaşmaq üzrədir. Növbəti mərhələdə ventilyasiya, işıqlandırma və təhlükəsizlik sistemləri quraşdırılacaq.\n\nParkinq sayəsində həyət tamamilə avtomobilsiz qalır — uşaqlar və ailələr üçün daha təhlükəsiz və sakit mühit yaranır.",
+    "cover": {
+      "key": "tower"
+    }
+  }
+];
 
 // Search results and link previews. Page titles get " | Çınarlı Park" appended (home uses its title as is).
 export const seo = {
@@ -467,6 +512,11 @@ export const seo = {
     title: "Əlaqə — satış ofisi",
     description:
       "Çınarlı Park satış ofisi: telefon, WhatsApp, iş saatları və ünvan. Qiymət, ilkin ödəniş və rezerv barədə tez-tez verilən suallar.",
+  },
+  news: {
+    title: "Xəbərlər — tikinti və layihə yenilikləri",
+    description:
+      "Çınarlı Park-dan son xəbərlər: tikintinin gedişi, satış ofisi və layihə ilə bağlı yeniliklər.",
   },
   gallery: {
     title: "Qalereya — layihənin fotoları",

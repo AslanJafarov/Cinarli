@@ -1,11 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { logout, saveSiteData, setSiteMode } from "@/app/admin/actions";
 import ApartmentsEditor from "./ApartmentsEditor";
-import { SECTION_GROUPS, STORAGE_KEY } from "./adminConfig";
+import { MAIN_SECTIONS, TEXT_GROUPS } from "./adminConfig";
 import { ValueEditor } from "./FieldEditor";
 import GalleryEditor from "./GalleryEditor";
+import SitePreview from "./SitePreview";
+import LeadsEditor from "./LeadsEditor";
+import NewsEditor from "./NewsEditor";
+import SiteImagesEditor from "./SiteImagesEditor";
+import TranslationsEditor from "./TranslationsEditor";
 import { buttonClass, Icon } from "./ui";
 
 // Keeps only sections the website knows about, falling back to the original data.
@@ -20,55 +26,63 @@ function mergeKnownSections(initialData, incoming) {
   return merged;
 }
 
-function readDraft(initialData) {
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    const data = mergeKnownSections(initialData, parsed.data);
-    return data ? { data, savedAt: parsed.savedAt ?? null } : null;
-  } catch {
-    return null;
-  }
-}
+const TEXTS_MENU = "Sayt mətnləri";
 
-function buildGroups(initialData) {
-  const listed = new Set(
-    SECTION_GROUPS.flatMap((group) => group.items.map((item) => item.key)),
-  );
-  const groups = SECTION_GROUPS.map((group) => ({
+// Main sections first; everything else in the texts menu. Sections the site has but the
+// config doesn't list land under "Digər".
+function buildMenus(initialData) {
+  const listed = new Set([
+    ...MAIN_SECTIONS.map((item) => item.key),
+    ...TEXT_GROUPS.flatMap((group) => group.items.map((item) => item.key)),
+  ]);
+  const main = MAIN_SECTIONS.filter((item) => item.special || item.key in initialData);
+  const texts = TEXT_GROUPS.map((group) => ({
     ...group,
-    items: group.items.filter((item) => item.key in initialData),
+    items: group.items.filter((item) => item.special || item.key in initialData),
   })).filter((group) => group.items.length > 0);
 
   const extra = Object.keys(initialData).filter((key) => !listed.has(key));
   if (extra.length > 0) {
-    groups.push({
+    texts.push({
       group: "Digər",
       items: extra.map((key) => ({ key, title: key, description: "" })),
     });
   }
-  return groups;
+  return { main, texts };
 }
 
-export default function AdminDashboard({ initialData }) {
-  // Rendered on the client only (see AdminApp), so reading the draft here is safe.
-  const [initialDraft] = useState(() => readDraft(initialData));
-  const [data, setData] = useState(() => initialDraft?.data ?? initialData);
-  const [savedData, setSavedData] = useState(() => initialDraft?.data ?? initialData);
-  const [savedAt, setSavedAt] = useState(() => initialDraft?.savedAt ?? null);
-  const [activeKey, setActiveKey] = useState("apartments");
+export default function AdminDashboard({
+  initialData,
+  initialTranslations,
+  initialLeads,
+  initialMode,
+  initialSavedAt,
+}) {
+  const [data, setData] = useState(initialData);
+  const [savedData, setSavedData] = useState(initialData);
+  const [translations, setTranslations] = useState(initialTranslations);
+  const [savedTranslations, setSavedTranslations] = useState(initialTranslations);
+  const [leads, setLeads] = useState(initialLeads);
+  const [savedAt, setSavedAt] = useState(initialSavedAt);
+  const [mode, setMode] = useState(initialMode);
+  const [saving, startSaving] = useTransition();
+  const [switchingMode, startSwitchingMode] = useTransition();
+  const [activeKey, setActiveKey] = useState("leads");
   const [confirmReset, setConfirmReset] = useState(false);
   const [notice, setNotice] = useState(null);
   const importInputRef = useRef(null);
 
-  const groups = buildGroups(initialData);
-  const activeGroup = groups.find((group) =>
-    group.items.some((item) => item.key === activeKey),
+  const menus = buildMenus(initialData);
+  const textItems = menus.texts.flatMap((group) =>
+    group.items.map((item) => ({ ...item, group: group.group })),
   );
   const activeSection =
-    activeGroup?.items.find((item) => item.key === activeKey) ?? groups[0].items[0];
-  const dirty = data !== savedData;
+    [...menus.main, ...textItems].find((item) => item.key === activeKey) ?? menus.main[0];
+  const inTexts = textItems.some((item) => item.key === activeSection.key);
+  // Which sidebar menu is open; follows the active section until the user switches.
+  const [openMenu, setOpenMenu] = useState(null);
+  const menu = openMenu ?? (inTexts ? "texts" : "main");
+  const dirty = data !== savedData || translations !== savedTranslations;
 
   useEffect(() => {
     if (!dirty) return undefined;
@@ -99,40 +113,57 @@ export default function AdminDashboard({ initialData }) {
 
   const selectSection = (key) => {
     setActiveKey(key);
+    setOpenMenu(null);
     setConfirmReset(false);
     window.scrollTo({ top: 0 });
   };
 
-  const save = () => {
-    const at = new Date().toISOString();
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ savedAt: at, data }));
-      setSavedData(data);
-      setSavedAt(at);
-      showNotice("success", "Qaralama yadda saxlanıldı.");
-    } catch {
-      showNotice(
-        "error",
-        "Brauzer yaddaşı doldu. Bəzi şəkilləri silib yenidən yadda saxlayın.",
-      );
-    }
-  };
+  const save = () =>
+    startSaving(async () => {
+      try {
+        const result = await saveSiteData(data, translations);
+        if (result?.error) throw new Error(result.error);
+        setSavedData(data);
+        setSavedTranslations(translations);
+        setSavedAt(result.savedAt);
+        showNotice(
+          "success",
+          mode === "production"
+            ? "Yadda saxlanıldı. Dəyişikliklər saytda görünür."
+            : "Yadda saxlanıldı. Mock rejimi söndürüləndə saytda görünəcək.",
+        );
+      } catch {
+        showNotice("error", "Yadda saxlanmadı. İnterneti yoxlayıb yenidən cəhd edin.");
+      }
+    });
 
+  const toggleMode = () =>
+    startSwitchingMode(async () => {
+      const next = mode === "mock" ? "production" : "mock";
+      try {
+        const result = await setSiteMode(next);
+        setMode(result.mode);
+        showNotice(
+          "success",
+          result.mode === "mock"
+            ? "Mock data rejimi açıldı: saytda nümunə məlumatlar göstərilir."
+            : "Mock data rejimi söndürüldü: saytda yadda saxlanmış məlumatlar göstərilir.",
+        );
+      } catch {
+        showNotice("error", "Rejim dəyişmədi. Yenidən cəhd edin.");
+      }
+    });
+
+  // Throws away unsaved edits.
   const reset = () => {
-    try {
-      window.localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      // Storage unavailable — nothing to remove.
-    }
-    setData(initialData);
-    setSavedData(initialData);
-    setSavedAt(null);
+    setData(savedData);
+    setTranslations(savedTranslations);
     setConfirmReset(false);
-    showNotice("success", "Dəyişikliklər silindi, orijinal məlumatlar bərpa olundu.");
+    showNotice("success", "Yadda saxlanmamış dəyişikliklər ləğv edildi.");
   };
 
   const exportJson = () => {
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
+    const blob = new Blob([JSON.stringify({ data, translations }, null, 2)], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
@@ -150,6 +181,12 @@ export default function AdminDashboard({ initialData }) {
       const merged = mergeKnownSections(initialData, parsed?.data ?? parsed);
       if (!merged) throw new Error("Invalid data");
       setData(merged);
+      if (parsed?.translations?.ru || parsed?.translations?.en) {
+        setTranslations((current) => ({
+          ru: { ...current.ru, ...parsed.translations.ru },
+          en: { ...current.en, ...parsed.translations.en },
+        }));
+      }
       showNotice("success", "JSON faylı yükləndi. Yadda saxlamağı unutmayın.");
     } catch {
       showNotice("error", "JSON faylı oxunmadı. Faylı yoxlayın.");
@@ -163,7 +200,7 @@ export default function AdminDashboard({ initialData }) {
           dateStyle: "short",
           timeStyle: "short",
         })}`
-      : "Orijinal məlumatlar";
+      : "Hələ yadda saxlanmayıb";
 
   const buildingOptions = (
     data.apartmentFilters?.find((filter) => filter.field === "building")?.options ?? []
@@ -182,56 +219,138 @@ export default function AdminDashboard({ initialData }) {
               Admin panel
             </p>
           </div>
-          <Link
-            href="/"
-            className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:bg-white/10 lg:hidden"
-          >
-            Sayta qayıt
-          </Link>
+          <div className="flex gap-2 lg:hidden">
+            <Link
+              href="/"
+              className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:bg-white/10"
+            >
+              Sayta qayıt
+            </Link>
+            <form action={logout}>
+              <button
+                type="submit"
+                className="cursor-pointer rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:bg-white/10"
+              >
+                Çıxış
+              </button>
+            </form>
+          </div>
         </div>
 
         <nav
           aria-label="Bölmələr"
-          className="flex gap-4 overflow-x-auto px-5 pb-4 lg:flex-1 lg:flex-col lg:gap-7 lg:overflow-y-auto lg:px-4 lg:pb-6"
+          className="flex gap-1.5 overflow-x-auto px-5 pb-4 lg:flex-1 lg:flex-col lg:gap-1 lg:overflow-y-auto lg:px-4 lg:pb-6"
         >
-          {groups.map((group) => (
-            <div key={group.group} className="shrink-0">
+          {menu === "main" ? (
+            <>
               <p className="hidden px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/40 lg:block">
-                {group.group}
+                Əsas
               </p>
-              <ul className="flex gap-1.5 lg:block lg:space-y-1">
-                {group.items.map((item) => {
-                  const active = item.key === activeSection.key;
-                  const count = Array.isArray(data[item.key]) ? data[item.key].length : null;
-                  return (
-                    <li key={item.key} className="shrink-0">
+              {menus.main.map((item) => {
+                const active = item.key === activeSection.key;
+                const count = Array.isArray(data[item.key])
+                  ? data[item.key].length
+                  : item.key === "gallery"
+                    ? (data.gallery?.photos?.length ?? 0)
+                    : item.key === "leads"
+                      ? leads.filter((lead) => lead.status !== "done").length
+                      : null;
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => selectSection(item.key)}
+                    aria-current={active ? "page" : undefined}
+                    className={`flex shrink-0 cursor-pointer items-center gap-3 whitespace-nowrap rounded-xl px-3 py-2 text-left text-sm transition max-lg:py-2.5 lg:py-2.5 ${
+                      active
+                        ? "bg-white text-[#13271f]"
+                        : "text-white/80 hover:bg-white/10 hover:text-white"
+                    }`}
+                  >
+                    <span
+                      className={`grid size-8 shrink-0 place-items-center rounded-lg max-lg:hidden ${
+                        active ? "bg-[#13271f] text-white" : "bg-white/10"
+                      }`}
+                    >
+                      <Icon name={item.icon} />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-semibold">{item.title}</span>
+                      <span
+                        className={`block truncate text-xs max-lg:hidden ${
+                          active ? "text-[#13271f]/60" : "text-white/45"
+                        }`}
+                      >
+                        {item.summary}
+                      </span>
+                    </span>
+                    {count !== null && (
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                          active ? "bg-[#13271f]/10" : "bg-white/10"
+                        }`}
+                      >
+                        {count}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+
+              {/* Opens the separate texts menu */}
+              <button
+                type="button"
+                onClick={() => setOpenMenu("texts")}
+                className="flex shrink-0 cursor-pointer items-center gap-3 whitespace-nowrap rounded-xl px-3 py-2 text-left text-sm text-white/80 transition hover:bg-white/10 hover:text-white max-lg:border max-lg:border-white/15 lg:mt-4 lg:border-t lg:border-white/10 lg:pt-5"
+              >
+                <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-white/10 max-lg:hidden">
+                  <Icon name="text" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold">{TEXTS_MENU}</span>
+                  <span className="block truncate text-xs text-white/45 max-lg:hidden">
+                    Tərcümələr, başlıqlar, footer, SEO
+                  </span>
+                </span>
+                <Icon name="right" />
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => setOpenMenu("main")}
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-xl px-3 py-2 text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white max-lg:border max-lg:border-white/15 lg:mb-2"
+              >
+                <Icon name="left" /> Əsas menyu
+              </button>
+              {menus.texts.map((group) => (
+                <div key={group.group} className="contents lg:mb-4 lg:block">
+                  <p className="hidden px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/40 lg:block">
+                    {group.group}
+                  </p>
+                  {group.items.map((item) => {
+                    const active = item.key === activeSection.key;
+                    return (
                       <button
+                        key={item.key}
                         type="button"
                         onClick={() => selectSection(item.key)}
                         aria-current={active ? "page" : undefined}
-                        className={`flex w-full cursor-pointer items-center justify-between gap-3 whitespace-nowrap rounded-xl px-3 py-2 text-left text-sm transition max-md:py-3 ${
+                        className={`flex w-full shrink-0 cursor-pointer items-center whitespace-nowrap rounded-xl px-3 py-2 text-left text-sm transition max-lg:w-auto max-md:py-3 ${
                           active
                             ? "bg-white font-semibold text-[#13271f]"
                             : "text-white/75 hover:bg-white/10 hover:text-white"
                         }`}
                       >
                         {item.title}
-                        {count !== null && (
-                          <span
-                            className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                              active ? "bg-[#13271f]/10" : "bg-white/10"
-                            }`}
-                          >
-                            {count}
-                          </span>
-                        )}
                       </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
+                    );
+                  })}
+                </div>
+              ))}
+            </>
+          )}
         </nav>
 
         <div className="hidden border-t border-white/10 px-7 py-5 lg:block">
@@ -241,6 +360,14 @@ export default function AdminDashboard({ initialData }) {
           >
             <Icon name="left" /> Sayta qayıt
           </Link>
+          <form action={logout} className="mt-3">
+            <button
+              type="submit"
+              className="cursor-pointer text-sm text-white/50 transition hover:text-white"
+            >
+              Çıxış
+            </button>
+          </form>
         </div>
       </aside>
 
@@ -250,7 +377,7 @@ export default function AdminDashboard({ initialData }) {
           <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 max-md:gap-y-2.5">
             <div className="min-w-0 max-md:w-full">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#9a9991] max-md:hidden">
-                {activeGroup?.group}
+                {inTexts ? `${TEXTS_MENU} · ${activeSection.group}` : "Əsas"}
               </p>
               <h1 className="truncate text-2xl font-bold max-md:text-xl">{activeSection.title}</h1>
               {/* Mobile: status sits under the title; the action row scrolls sideways */}
@@ -304,54 +431,154 @@ export default function AdminDashboard({ initialData }) {
               {confirmReset ? (
                 <>
                   <button type="button" onClick={reset} className={buttonClass.danger}>
-                    Bəli, sıfırla
+                    Bəli, ləğv et
                   </button>
                   <button
                     type="button"
                     onClick={() => setConfirmReset(false)}
                     className={buttonClass.ghost}
                   >
-                    Ləğv et
+                    Geri
                   </button>
                 </>
               ) : (
                 <button
                   type="button"
                   onClick={() => setConfirmReset(true)}
+                  disabled={!dirty || saving}
                   className={buttonClass.secondary}
                 >
-                  Sıfırla
+                  Dəyişiklikləri ləğv et
                 </button>
               )}
               <button
                 type="button"
                 onClick={save}
-                disabled={!dirty}
+                disabled={!dirty || saving}
                 className={`${buttonClass.primary} max-md:order-first`}
               >
-                Yadda saxla
+                {saving ? "Saxlanılır…" : "Yadda saxla"}
               </button>
             </div>
           </div>
         </header>
 
-        <main className="flex-1 px-5 py-6 lg:px-10 lg:py-8">
-          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-[#c9a73f]/30 bg-[#fbf5df] px-4 py-3 text-sm text-[#5a4a1e]">
-            <Icon name="info" className="mt-0.5 size-4 shrink-0" />
-            <p>
-              <strong>Qaralama rejimi.</strong> Buradakı dəyişikliklər hələ sayta tətbiq
-              edilmir və yalnız bu brauzerdə saxlanılır. Məlumatları başqa yerə köçürmək
-              üçün “JSON ixrac” istifadə edin.
-            </p>
+        <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-6 lg:px-10 lg:py-8">
+          {/* Site mode */}
+          <div
+            className={`mb-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-2xl border px-4 py-3 text-sm ${
+              mode === "mock"
+                ? "border-[#c9a73f]/30 bg-[#fbf5df] text-[#5a4a1e]"
+                : "border-[#5f9a78]/30 bg-[#e7f0ea] text-[#1c3b2b]"
+            }`}
+          >
+            <div className="flex min-w-0 flex-1 items-start gap-3">
+              <Icon name="info" className="mt-0.5 size-4 shrink-0" />
+              {mode === "mock" ? (
+                <p>
+                  <strong>Mock data rejimi açıqdır.</strong> Saytda nümunə mənzillər və
+                  fotolar göstərilir. Burada yadda saxladığınız məlumatlar rejimi
+                  söndürəndə saytda görünəcək.
+                </p>
+              ) : (
+                <p>
+                  <strong>Canlı rejim.</strong> Saytda buradakı məlumatlar göstərilir. Yadda
+                  saxladığınız dəyişikliklər saytda dərhal görünür; mənzil və ya foto yoxdursa,
+                  saytda “hazırda yoxdur” bildirişi çıxır.
+                </p>
+              )}
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={mode === "mock"}
+              onClick={toggleMode}
+              disabled={switchingMode}
+              className="inline-flex shrink-0 cursor-pointer items-center gap-2.5 font-semibold disabled:cursor-wait disabled:opacity-60"
+            >
+              Mock data
+              <span
+                aria-hidden="true"
+                className={`relative h-6 w-11 rounded-full transition-colors ${
+                  mode === "mock" ? "bg-[#c9a73f]" : "bg-[#16201b]/20"
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 size-5 rounded-full bg-white shadow transition-[left] ${
+                    mode === "mock" ? "left-[22px]" : "left-0.5"
+                  }`}
+                />
+              </span>
+            </button>
           </div>
 
-          {activeSection.description && (
-            <p className="mb-6 max-w-3xl text-sm text-[#77766f]">
-              {activeSection.description}
-            </p>
-          )}
+          {/* What is being edited and where it appears on the site */}
+          <section
+            className={`mb-6 grid items-center gap-6 rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(22,32,27,0.06)] sm:p-6 lg:gap-8 ${
+              activeSection.preview ? "lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]" : ""
+            }`}
+          >
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2f7d57]">
+                Nəyi redaktə edirsiniz
+              </p>
+              <h2 className="mt-1.5 text-xl font-bold">{activeSection.title}</h2>
+              {activeSection.description && (
+                <p className="mt-1.5 max-w-xl text-sm text-[#77766f]">
+                  {activeSection.description}
+                </p>
+              )}
+              {activeSection.where && (
+                <p className="mt-4 flex items-start gap-2 text-sm">
+                  <span className="mt-1.5 size-2 shrink-0 rounded-[2px] bg-[#2f7d57]" />
+                  <span>
+                    <span className="font-semibold">Saytda: </span>
+                    {activeSection.where}
+                  </span>
+                </p>
+              )}
+              {activeSection.href && (
+                <a
+                  href={activeSection.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${buttonClass.secondary} mt-4`}
+                >
+                  Saytda bax <Icon name="external" />
+                </a>
+              )}
+            </div>
+            <SitePreview
+              section={activeSection}
+              data={data}
+              mode={mode}
+              version={savedAt ?? "initial"}
+            />
+          </section>
 
-          {activeSection.key === "apartments" ? (
+          {activeSection.key === "leads" ? (
+            <LeadsEditor
+              leads={leads}
+              onChange={setLeads}
+              onError={(text) => showNotice("error", text)}
+            />
+          ) : activeSection.key === "news" ? (
+            <NewsEditor
+              news={data.news}
+              onChange={(updater) => updateSection("news", updater)}
+            />
+          ) : activeSection.key === "siteImages" ? (
+            <SiteImagesEditor
+              siteImages={data.siteImages}
+              onChange={(updater) => updateSection("siteImages", updater)}
+            />
+          ) : activeSection.key === "translations" ? (
+            <TranslationsEditor
+              data={data}
+              translations={translations}
+              onChange={setTranslations}
+            />
+          ) : activeSection.key === "apartments" ? (
             <ApartmentsEditor
               apartments={data.apartments}
               statuses={data.apartmentStatuses ?? {}}
@@ -364,7 +591,7 @@ export default function AdminDashboard({ initialData }) {
               onChange={(updater) => updateSection("gallery", updater)}
             />
           ) : (
-            <div className="max-w-5xl rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(22,32,27,0.06)] sm:p-7">
+            <div className="rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(22,32,27,0.06)] sm:p-7">
               <ValueEditor
                 key={activeSection.key}
                 idPrefix={activeSection.key}

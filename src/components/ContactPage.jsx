@@ -9,7 +9,7 @@ export default async function ContactPage() {
   const { ui } = content;
 
   return (
-    <main className="flex-1 bg-[#f3f0e9] px-page pb-[clamp(64px,7vw,140px)] pt-[clamp(28px,3.2vw,64px)] text-[#16201b]">
+    <main data-admin-preview="contactPage" className="flex-1 bg-[#f3f0e9] px-page pb-[clamp(64px,7vw,140px)] pt-[clamp(28px,3.2vw,64px)] text-[#16201b]">
       {/* Same pill as the "Mənzillər" back link on the apartment page */}
       <Link
         href={localizeHref(locale, "/")}

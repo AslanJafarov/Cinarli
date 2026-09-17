@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# admin panel data and uploaded photos (lives on the server, not in git)
+/storage

@@ -1,6 +1,11 @@
+import { addLead } from "@/lib/leads";
 import { isValidInternationalPhone } from "@/lib/phone";
 
-// Receives "call me back" requests from the lead forms.
+const text = (value, max) => (typeof value === "string" ? value.trim().slice(0, max) : "");
+
+const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+
+// Receives "call me back" requests from the lead forms and saves them for the admin panel.
 export async function POST(request) {
   let body;
   try {
@@ -22,16 +27,24 @@ export async function POST(request) {
     );
   }
 
-  const lead = {
-    phone,
-    source: String(body.source ?? "website").slice(0, 40),
-    page: String(body.page ?? "").slice(0, 200),
-    locale: String(body.locale ?? "az").slice(0, 5),
-    createdAt: new Date().toISOString(),
-  };
+  const utm = Object.fromEntries(
+    UTM_KEYS.map((key) => [key, text(body.utm?.[key], 100)]).filter(([, value]) => value),
+  );
 
-  // TODO: forward to the sales team (CRM, e-mail or Telegram). Until then leads only reach the server log.
-  console.info("[lead]", JSON.stringify(lead));
+  try {
+    await addLead({
+      phone,
+      source: text(body.source, 40) || "website",
+      apartmentId: text(body.apartmentId, 40) || null,
+      page: text(body.page, 200),
+      locale: text(body.locale, 5) || "az",
+      utm,
+      landingPage: text(body.landingPage, 200),
+    });
+  } catch (error) {
+    console.error("[lead] could not be saved", error);
+    return Response.json({ error: "Göndərmək alınmadı." }, { status: 500 });
+  }
 
   return Response.json({ ok: true }, { status: 201 });
 }

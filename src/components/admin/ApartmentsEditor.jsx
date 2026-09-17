@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import { useId, useState } from "react";
-import { defaultPlanKey, planImages } from "../PlanCard";
 import { moveItem } from "./adminConfig";
-import { readImageFile } from "./imageUtils";
+import { uploadImage } from "./imageUtils";
 import { buttonClass, Icon, IconButton, inputClass, labelClass } from "./ui";
 
 const statusChipClass = {
@@ -37,20 +36,20 @@ function createApartment(apartments) {
     balconies: 1,
     renovation: "Seçimə görə",
     status: "available",
-    plan: defaultPlanKey,
     planImage: null,
     photos: [],
     layout: [{ name: "", area: "" }],
   };
 }
 
-function PlanThumbnail({ apartment, sizes, className = "object-contain", eager = false }) {
+// Only uploaded plans: apartments have no default plan.
+function PlanThumbnail({ apartment, className = "object-contain", eager = false }) {
   const loading = eager ? "eager" : undefined;
 
-  if (apartment.planImage) {
+  if (apartment.planImage?.src) {
     return (
       <Image
-        src={apartment.planImage}
+        src={apartment.planImage.src}
         alt={`${apartment.id} planı`}
         fill
         unoptimized
@@ -60,14 +59,9 @@ function PlanThumbnail({ apartment, sizes, className = "object-contain", eager =
     );
   }
   return (
-    <Image
-      src={planImages[apartment.plan] ?? planImages[defaultPlanKey]}
-      alt={`${apartment.id} standart planı`}
-      fill
-      sizes={sizes}
-      loading={loading}
-      className={className}
-    />
+    <span className="grid size-full place-items-center text-[#a4a39b]">
+      <Icon name="photo" className="size-1/3 max-h-10 max-w-10" />
+    </span>
   );
 }
 
@@ -267,16 +261,14 @@ function ApartmentForm({
     setUploadError(null);
     try {
       if (kind === "plan") {
-        const dataUrl = await readImageFile(files[0], 1400);
-        patch({ planImage: dataUrl });
+        // `plan` pointed at a built-in sample plan; an upload replaces it for good.
+        patch({ planImage: await uploadImage(files[0], 1600), plan: undefined });
       } else {
-        const dataUrls = await Promise.all(
-          files.map((file) => readImageFile(file, 1600)),
-        );
-        patchWith((item) => ({ photos: [...(item.photos ?? []), ...dataUrls] }));
+        const uploaded = await Promise.all(files.map((file) => uploadImage(file)));
+        patchWith((item) => ({ photos: [...(item.photos ?? []), ...uploaded] }));
       }
     } catch {
-      setUploadError("Şəkil oxunmadı. Başqa fayl seçin.");
+      setUploadError("Şəkil yüklənmədi. Başqa fayl seçin və ya yenidən cəhd edin.");
     } finally {
       setUploading(null);
     }
@@ -319,7 +311,7 @@ function ApartmentForm({
       <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(22,32,27,0.06)] sm:p-6">
         <div className="flex min-w-0 items-center gap-4">
           <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-[#efeeeb]">
-            <PlanThumbnail apartment={apartment} sizes="64px" className="object-contain p-1.5" />
+            <PlanThumbnail apartment={apartment} className="object-contain p-1.5" />
           </div>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
@@ -373,7 +365,7 @@ function ApartmentForm({
       {/* Images */}
       <Card
         title="Şəkillər"
-        description="Plan şəkli mənzil kartında və mənzil səhifəsində göstəriləcək. Şəkil yüklənməyibsə standart plan istifadə olunur."
+        description="Plan şəkli mənzil kartında və mənzil səhifəsində göstəriləcək. Yüklənməyibsə, saytda “Plan tezliklə əlavə olunacaq” yazılır."
       >
         <div className="grid gap-6 lg:grid-cols-2">
           <div>
@@ -381,63 +373,45 @@ function ApartmentForm({
             <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-[#16201b]/10 bg-[#efeeeb]">
               <PlanThumbnail
                 apartment={apartment}
-                sizes="(min-width: 1024px) 30vw, 90vw"
                 className="object-contain p-4"
                 eager
               />
-              <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold">
-                {apartment.planImage ? "Yüklənmiş şəkil" : "Standart plan"}
-              </span>
+              {!apartment.planImage?.src && (
+                <span className="absolute left-3 top-3 rounded-full bg-[#fbf5df] px-2.5 py-1 text-xs font-semibold text-[#8a6a12]">
+                  Plan yüklənməyib
+                </span>
+              )}
             </div>
             <div className="mt-3">
               <DropZone
                 id={`${baseId}-plan-upload`}
-                label={apartment.planImage ? "Plan şəklini dəyiş" : "Plan şəklini yüklə"}
+                label={apartment.planImage?.src ? "Plan şəklini dəyiş" : "Plan şəklini yüklə"}
                 busy={uploading === "plan"}
                 onFiles={(files) => handleFiles(files, "plan")}
               />
             </div>
-            <div className="mt-3 flex flex-wrap items-end gap-3">
-              <div className="min-w-44 flex-1">
-                <label htmlFor={`${baseId}-plan`} className={labelClass}>
-                  Standart plan (şəkil olmadıqda)
-                </label>
-                <select
-                  id={`${baseId}-plan`}
-                  value={apartment.plan}
-                  onChange={(event) => patch({ plan: event.target.value })}
-                  className={inputClass}
-                >
-                  {Object.keys(planImages).map((key) => (
-                    <option key={key} value={key}>
-                      {key.replace("-", " ")}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {apartment.planImage && (
-                <button
-                  type="button"
-                  onClick={() => patch({ planImage: null })}
-                  className={buttonClass.secondary}
-                >
-                  <Icon name="trash" /> Şəkli sil
-                </button>
-              )}
-            </div>
+            {apartment.planImage?.src && (
+              <button
+                type="button"
+                onClick={() => patch({ planImage: null })}
+                className={`${buttonClass.secondary} mt-3`}
+              >
+                <Icon name="trash" /> Şəkli sil
+              </button>
+            )}
           </div>
 
           <div>
             <p className={labelClass}>Əlavə fotolar ({photos.length})</p>
             {photos.length > 0 ? (
               <ul className="grid grid-cols-3 gap-2 max-md:grid-cols-2">
-                {photos.map((src, photoIndex) => (
+                {photos.map((photo, photoIndex) => (
                   <li
                     key={photoIndex}
                     className="relative aspect-square overflow-hidden rounded-lg bg-[#efeeeb]"
                   >
                     <Image
-                      src={src}
+                      src={photo.src}
                       alt={`${trimmedId} foto ${photoIndex + 1}`}
                       fill
                       unoptimized
@@ -795,9 +769,6 @@ export default function ApartmentsEditor({
             <p className="mt-1 text-sm text-[#77766f]">
               İlk mənzili əlavə etmək üçün “Yeni” düyməsinə basın.
             </p>
-            <button type="button" onClick={add} className={`${buttonClass.primary} mt-5`}>
-              <Icon name="plus" /> Mənzil əlavə et
-            </button>
           </div>
         </section>
       )}

@@ -4,13 +4,13 @@ import Image from "next/image";
 import { useId, useState } from "react";
 import { galleryImageFiles } from "../../lib/galleryPhotos";
 import { moveItem } from "./adminConfig";
-import { readImageFile } from "./imageUtils";
+import { uploadImage } from "./imageUtils";
 import { Icon, IconButton } from "./ui";
 
 const ACCEPTED_IMAGES = ["image/png", "image/jpeg", "image/webp"];
 
 function PhotoPreview({ photo }) {
-  // Uploaded in the admin panel: a data URL kept in the draft.
+  // Uploaded in the admin panel: served from /media.
   if (photo.src) {
     return (
       <Image src={photo.src} alt={photo.alt} fill unoptimized className="object-cover" />
@@ -71,20 +71,20 @@ export default function GalleryEditor({ gallery, onChange }) {
           key: `upload-${stamp}-${index}`,
           category: categories[0]?.id ?? "exterior",
           alt: file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "),
-          src: await readImageFile(file, 1600),
+          ...(await uploadImage(file)),
         })),
       );
       // New photos go first, so they're visible right away.
       setPhotos((current) => [...added, ...current]);
     } catch {
-      setError("Şəkil oxunmadı. Başqa fayl seçin.");
+      setError("Şəkil yüklənmədi. Başqa fayl seçin və ya yenidən cəhd edin.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <section className="max-w-6xl rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(22,32,27,0.06)] sm:p-6">
+    <section className="rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(22,32,27,0.06)] sm:p-6">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="text-base font-bold">Qalereya fotoları</h3>
         <p className="text-sm text-[#6b6a63]">{photos.length} foto</p>

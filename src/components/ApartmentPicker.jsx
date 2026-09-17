@@ -1,32 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import EmptyNotice from "./EmptyNotice";
 import MobileActionBar from "./MobileActionBar";
 import PlanCard from "./PlanCard";
-import {
-  apartmentFilters as baseFilters,
-  apartments as baseApartments,
-} from "../data/mock";
 import { useI18n } from "../i18n/client";
 import { localizeHref } from "../i18n/config";
-import { translate } from "../i18n/format";
-import { ordinal } from "../lib/seo";
+import { ordinal, translate } from "../i18n/format";
+import { defaultFilterValues, filterQuery, filterValuesFromQuery } from "../lib/apartmentFilters";
 
 const statusStyles = {
   available: { swatch: "bg-[#24503a]", tile: "bg-[#c8d9cd]" },
   reserved: { swatch: "bg-[#ebe3c9]", tile: "bg-[#ebe3c9]" },
   sold: { swatch: "bg-[#dcdcda]", tile: "bg-[#e0e0de]" },
 };
-
-// Filter values don't change between languages, so defaults come from the base data.
-const defaultFilterValues = Object.fromEntries(
-  baseFilters.map((filter) => [filter.field, filter.defaultValue]),
-);
-
-const clearedFilterValues = Object.fromEntries(
-  baseFilters.map((filter) => [filter.field, "all"]),
-);
 
 function matchesFilter(apartment, filter, selectedValue) {
   if (selectedValue === "all") return true;
@@ -54,11 +42,15 @@ export default function ApartmentPicker() {
   const areaText = (value) => translate(ui.common.area, { value });
   const apartmentHref = (id) => localizeHref(locale, `/menziller/${id}`);
 
-  const [filterValues, setFilterValues] = useState(defaultFilterValues);
+  const clearedFilterValues = Object.fromEntries(
+    apartmentFilters.map((filter) => [filter.field, "all"]),
+  );
+
+  const [filterValues, setFilterValues] = useState(() => defaultFilterValues(apartmentFilters));
   // Mobile: filters collapse into a summary row.
   const [filtersOpen, setFiltersOpen] = useState(false);
   // Hovering or focusing a flat previews it; clicking opens its page.
-  const [selectedId, setSelectedId] = useState(baseApartments[0].id);
+  const [selectedId, setSelectedId] = useState(apartments[0]?.id);
 
   const filteredApartments = apartments.filter((apartment) =>
     apartmentFilters.every((filter) =>
@@ -82,13 +74,27 @@ export default function ApartmentPicker() {
     return [option.label];
   });
 
-  const updateFilter = (field, value) =>
-    setFilterValues((current) => ({ ...current, [field]: value }));
+  // The page is prerendered without the query string, so filters from the link are applied
+  // after it loads (links from the home page's quick search, shared links, the back button).
+  // Reading the URL during render would make the server and browser HTML differ.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFilterValues(filterValuesFromQuery(apartmentFilters, window.location.search));
+  }, [apartmentFilters]);
+
+  // Keeps the chosen filters in the URL without adding history entries.
+  const setFilters = (values) => {
+    setFilterValues(values);
+    const url = `${window.location.pathname}${filterQuery(apartmentFilters, values)}${window.location.hash}`;
+    window.history.replaceState(null, "", url);
+  };
+
+  const updateFilter = (field, value) => setFilters({ ...filterValues, [field]: value });
 
   const activeFilterCount = Object.values(filterValues).filter(
     (value) => value !== "all",
   ).length;
-  const clearFilters = () => setFilterValues(clearedFilterValues);
+  const clearFilters = () => setFilters(clearedFilterValues);
 
   // Shown next to the filters only when at least one is set.
   const clearFiltersButton = (className) =>
@@ -110,10 +116,34 @@ export default function ApartmentPicker() {
       </button>
     );
 
+  if (apartments.length === 0) {
+    const { phoneHref } = content.contactPage.office;
+    return (
+      <>
+        <main data-admin-preview="apartments" className="flex-1 bg-[#f1f0ec] px-page pb-[clamp(40px,4.1vw,80px)] pt-[clamp(28px,3vw,60px)] text-[#16201b]">
+          <h1 className="animate-rise-in text-[clamp(34px,3.8vw,72px)] font-bold leading-[1.05] motion-reduce:animate-none">
+            {apartmentPage.title}
+          </h1>
+          <EmptyNotice
+            icon="building"
+            title={ui.empty.noApartmentsTitle}
+            text={ui.empty.noApartmentsText}
+            actions={[
+              { href: localizeHref(locale, "/elaqe"), label: ui.empty.contact, primary: true },
+              { href: phoneHref, label: ui.empty.call, external: true },
+            ]}
+            className="mt-[clamp(20px,2.4vw,48px)] animate-rise-in [animation-delay:120ms] motion-reduce:animate-none"
+          />
+        </main>
+        <MobileActionBar variant="contact" />
+      </>
+    );
+  }
+
   return (
     <>
-    <main className="flex-1 bg-[#f1f0ec] px-page pb-[clamp(40px,4.1vw,80px)] pt-[clamp(28px,3vw,60px)] text-[#16201b]">
-      <div className="flex items-end justify-between gap-6">
+    <main data-admin-preview="apartments" className="flex-1 bg-[#f1f0ec] px-page pb-[clamp(40px,4.1vw,80px)] pt-[clamp(28px,3vw,60px)] text-[#16201b]">
+      <div data-admin-preview="apartmentPage" className="flex items-end justify-between gap-6">
         <div className="min-w-0">
           <h1 className="animate-rise-in text-[clamp(34px,3.8vw,72px)] font-bold leading-[1.05] motion-reduce:animate-none">
             {apartmentPage.title}
@@ -165,6 +195,7 @@ export default function ApartmentPicker() {
       {/* Filters */}
       <div
         id="apartment-filters"
+        data-admin-preview="apartmentFilters"
         className={`mt-[clamp(12px,1.65vw,32px)] grid grid-cols-2 gap-[clamp(8px,0.9vw,18px)] sm:grid-cols-3 lg:grid-cols-5 ${
           filtersOpen ? "" : "max-md:hidden"
         }`}
@@ -175,7 +206,7 @@ export default function ApartmentPicker() {
           <div
             key={filter.field}
             style={{ animationDelay: `${160 + index * 60}ms` }}
-            className="relative animate-rise-in rounded-[clamp(12px,1.1vw,22px)] bg-white transition-shadow focus-within:ring-2 focus-within:ring-[#24503a]/40 hover:shadow-[0_2px_10px_rgba(22,32,27,0.06)] motion-reduce:animate-none"
+            className="relative animate-rise-in rounded-[clamp(12px,1.1vw,22px)] bg-white transition-shadow has-[select:focus-visible]:ring-2 has-[select:focus-visible]:ring-[#24503a]/40 hover:shadow-[0_2px_10px_rgba(22,32,27,0.06)] motion-reduce:animate-none"
           >
             <label
               htmlFor={`filter-${filter.field}`}
@@ -256,7 +287,7 @@ export default function ApartmentPicker() {
 
         <div className="mt-[clamp(24px,2.9vw,56px)] grid gap-[clamp(20px,2.45vw,48px)] max-md:hidden lg:grid-cols-[minmax(0,1fr)_30vw]">
           {/* Plan + floor units */}
-          <section className="flex animate-rise-in flex-col gap-[clamp(24px,3.1vw,60px)] rounded-[clamp(18px,2vw,40px)] bg-white p-[clamp(16px,2.45vw,48px)] [animation-delay:420ms] motion-reduce:animate-none md:flex-row">
+          <section data-admin-preview="apartmentStatuses" className="flex animate-rise-in flex-col gap-[clamp(24px,3.1vw,60px)] rounded-[clamp(18px,2vw,40px)] bg-white p-[clamp(16px,2.45vw,48px)] [animation-delay:420ms] motion-reduce:animate-none md:flex-row">
             <PlanCard apartment={selected} className="md:w-[30vw]" />
 
             <div className="min-w-0 flex-1 md:pt-[0.65vw]">

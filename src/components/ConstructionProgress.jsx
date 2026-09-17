@@ -1,6 +1,8 @@
 import Image from "next/image";
-import heroBuilding from "../assets/hero-building.jpg";
+import Link from "next/link";
+import { localizeHref } from "../i18n/config";
 import { getI18n } from "../i18n/server";
+import { siteImage } from "../lib/siteImages";
 
 function ProgressBar({ value, label, className }) {
   return (
@@ -21,13 +23,15 @@ function ProgressBar({ value, label, className }) {
 }
 
 export default async function ConstructionProgress() {
-  const { content } = await getI18n();
+  const { locale, content } = await getI18n();
   const { title, subtitle, featured, updates, allUpdatesLabel } =
     content.constructionProgress;
+  const photo = siteImage(content.siteImages, "construction");
 
   return (
     <section
       id="tikinti"
+      data-admin-preview="constructionProgress"
       className="w-full scroll-mt-(--nav-h) bg-[#f6f5f0] pb-[clamp(56px,5vw,100px)] px-page pt-[clamp(40px,3vw,60px)] text-[#1a2a22]"
     >
       {/* Heading */}
@@ -39,14 +43,22 @@ export default async function ConstructionProgress() {
       <div className="mt-[clamp(28px,4.3vw,84px)] grid gap-[clamp(20px,3.1vw,60px)] lg:grid-cols-[41.65vw_minmax(0,1fr)] lg:items-start">
         {/* Latest update */}
         <article className="rounded-[clamp(18px,2vw,40px)] bg-white p-[clamp(12px,1.4vw,28px)] pb-[clamp(22px,1.9vw,38px)]">
-          <div className="relative aspect-[773/391] w-full max-w-full overflow-hidden rounded-[clamp(14px,1.4vw,28px)] bg-[#3f7fc4] max-sm:aspect-[4/3]">
-            <Image
-              src={heroBuilding}
-              alt={content.ui.construction.imageAlt}
-              placeholder="blur"
-              sizes="(min-width: 1024px) 40vw, 100vw"
-              className="absolute inset-0 h-full w-full object-cover object-[35%_30%]"
-            />
+          <div
+            className={`relative aspect-[773/391] w-full max-w-full overflow-hidden rounded-[clamp(14px,1.4vw,28px)] max-sm:aspect-[4/3] ${
+              photo ? "bg-[#3f7fc4]" : "bg-[#24503a]"
+            }`}
+          >
+            {photo && (
+              <Image
+                src={photo.image}
+                alt={content.ui.construction.imageAlt}
+                placeholder={photo.uploaded ? "empty" : "blur"}
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                className={`absolute inset-0 h-full w-full object-cover ${
+                  photo.uploaded ? "" : "object-[35%_30%]"
+                }`}
+              />
+            )}
             <svg
               aria-hidden="true"
               className="absolute inset-0 h-full w-full"
@@ -114,13 +126,12 @@ export default async function ConstructionProgress() {
             ))}
           </ul>
 
-          {/* Not functional yet */}
-          <button
-            type="button"
-            className="mt-[clamp(20px,2.15vw,42px)] h-[clamp(50px,3.75vw,72px)] w-full cursor-pointer rounded-full bg-[#12271e] px-8 text-[clamp(13px,0.9vw,17px)] uppercase tracking-[0.02em] text-[#f0ede6] sm:w-[clamp(240px,17.7vw,340px)]"
+          <Link
+            href={localizeHref(locale, "/xeberler")}
+            className="mt-[clamp(20px,2.15vw,42px)] flex h-[clamp(50px,3.75vw,72px)] w-full items-center justify-center rounded-full bg-[#12271e] px-8 text-[clamp(13px,0.9vw,17px)] uppercase tracking-[0.02em] text-[#f0ede6] transition-colors hover:bg-[#1f3d30] sm:w-[clamp(240px,17.7vw,340px)]"
           >
             {allUpdatesLabel}
-          </button>
+          </Link>
         </div>
       </div>
     </section>

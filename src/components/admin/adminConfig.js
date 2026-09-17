@@ -1,8 +1,102 @@
-export const STORAGE_KEY = "cinarli-admin-draft-v1";
+// `preview`: the page the section is on; SitePreview.jsx shows that page cropped to the
+// element marked data-admin-preview="<key>". `viewport` is the page width (default 1440). `href`: where "Saytda bax" opens it.
 
-// Sidebar groups, in the order the data appears on the website.
-// Any export in src/data/mock.js that is not listed here shows up under "Digər".
-export const SECTION_GROUPS = [
+// Edited most often: listed first in the sidebar.
+export const MAIN_SECTIONS = [
+  {
+    key: "leads",
+    special: true,
+    title: "Müraciətlər",
+    icon: "inbox",
+    summary: "Saytdan gələn zəng sorğuları",
+    description:
+      "Saytdakı formalardan göndərilən telefon nömrələri. Zəng etdikdən sonra “Baxıldı” kimi işarələyin. Buradakı dəyişikliklər dərhal yadda qalır.",
+    where: "Footer-dəki “Sizə zəng edək” forması və mənzil səhifəsindəki forma",
+    href: null,
+  },
+  {
+    key: "apartments",
+    title: "Mənzillər",
+    icon: "building",
+    summary: "Planlar, sahələr, statuslar",
+    description:
+      "Hər mənzilin plan şəkli, fotoları və mənzil səhifəsində göstərilən bütün məlumatları.",
+    where: "Mənzillər səhifəsi və hər mənzilin öz səhifəsi",
+    href: "/menziller",
+    preview: { path: "/menziller" },
+  },
+  {
+    key: "gallery",
+    title: "Qalereya",
+    icon: "photo",
+    summary: "Layihənin fotoları",
+    description:
+      "Yeni foto yükləyin, lazımsızları silin və ardıcıllığı dəyişin. İlk beş foto ana səhifədə də görünür.",
+    where: "Ana səhifədəki qalereya bölməsi və Qalereya səhifəsi",
+    href: "/qalereya",
+    preview: { path: "/" },
+  },
+  {
+    key: "news",
+    title: "Xəbərlər",
+    icon: "news",
+    summary: "Yeniliklər və elanlar",
+    description:
+      "Xəbər əlavə edin, şəkil yükləyin və mətni yazın. Xəbərlər saytda tarixə görə, ən yenisi birinci göstərilir.",
+    where: "Xəbərlər səhifəsi və hər xəbərin öz səhifəsi",
+    href: "/xeberler",
+    preview: { path: "/xeberler" },
+  },
+  {
+    key: "constructionProgress",
+    title: "Tikintinin gedişi",
+    icon: "progress",
+    summary: "Son yenilik və faizlər",
+    description: "Son yenilik və tarix üzrə irəliləyiş faizləri.",
+    where: "Ana səhifə, “Tikinti” bölməsi",
+    href: "/#tikinti",
+    preview: { path: "/" },
+  },
+  {
+    key: "siteImages",
+    title: "Sayt şəkilləri",
+    icon: "photo",
+    summary: "Giriş, layihə, üstünlüklər, tikinti",
+    description:
+      "Ana səhifə bölmələrinin böyük şəkilləri. Şəkil yüklənməyibsə, həmin yerdə brend yaşıl fonu görünür.",
+    where: "Ana səhifə: giriş, “Layihə”, “Üstünlüklər” və “Tikinti” bölmələri",
+    href: "/",
+    preview: { path: "/" },
+  },
+  {
+    key: "contactPage",
+    title: "Əlaqə və suallar",
+    icon: "chat",
+    summary: "Telefon, ünvan, FAQ",
+    description: "Satış ofisinin məlumatları və tez-tez verilən suallar.",
+    where: "Əlaqə səhifəsi",
+    href: "/elaqe",
+    preview: { path: "/elaqe" },
+  },
+];
+
+// Texts and settings that rarely change: a separate menu.
+// `special` sections aren't a key of the site data and have their own editor.
+export const TEXT_GROUPS = [
+  {
+    group: "Dillər",
+    items: [
+      {
+        key: "translations",
+        special: true,
+        title: "Tərcümələr (RU / EN)",
+        description:
+          "Saytdakı hər azərbaycanca mətnin rusca və ingiliscə variantı. Tərcümə mətnə bağlıdır: elementlərin yerini dəyişəndə itmir. Mətni azərbaycanca dəyişsəniz, yenisini burada tərcümə edin; tərcümə olunmayan mətn RU/EN səhifələrində azərbaycanca görünür.",
+        where: "Rus və ingilis dilli səhifələr",
+        href: "/ru",
+      },
+    ],
+  },
   {
     group: "Ana səhifə",
     items: [
@@ -10,78 +104,87 @@ export const SECTION_GROUPS = [
         key: "projectStats",
         title: "Əsas göstəricilər",
         description: "Hero bölməsinin altındakı dörd rəqəm.",
+        where: "Ana səhifə, girişin altındakı rəqəmlər",
+        href: "/",
+        preview: { path: "/" },
       },
       {
         key: "projectFeatures",
         title: "Xüsusiyyət kartları",
         description: "Göstəricilərin altındakı üç kart.",
+        where: "Ana səhifə, rəqəmlərin altındakı kartlar",
+        href: "/",
+        preview: { path: "/" },
       },
       {
         key: "projectOverview",
-        title: "Layihə",
+        title: "Layihə haqqında",
         description: "“Layihə” bölməsinin başlığı, göstəriciləri və kartları.",
+        where: "Ana səhifə, “Layihə” bölməsi",
+        href: "/#layihe",
+        preview: { path: "/" },
       },
       {
         key: "advantages",
         title: "Üstünlüklər",
         description: "Üstünlüklər bölməsinin başlığı və elementləri.",
+        where: "Ana səhifə, “Üstünlüklər” bölməsi",
+        href: "/#ustunlukler",
+        preview: { path: "/" },
       },
       {
         key: "locationInfo",
         title: "Yerləşmə",
         description: "Ünvan, xəritə koordinatları və yaxınlıqdakı məkanlar.",
-      },
-      {
-        key: "gallery",
-        title: "Qalereya",
-        description: "Qalereya səhifəsinin fotoları: yeni foto yükləyin, lazımsızları silin və ardıcıllığı dəyişin.",
-      },
-      {
-        key: "constructionProgress",
-        title: "Tikintinin gedişi",
-        description: "Son yenilik və tarix üzrə irəliləyiş faizləri.",
+        where: "Ana səhifə, xəritə bölməsi",
+        href: "/#yerlesme",
+        preview: { path: "/" },
       },
       {
         key: "paymentCalculator",
         title: "Ödəniş kalkulyatoru",
         description: "Nümunə ödəniş planı üçün mətnlər və dəyərlər.",
+        where: "Ana səhifə, ödəniş bölməsi",
+        href: "/#odenis",
+        preview: { path: "/" },
+      },
+      {
+        key: "quickSearch",
+        title: "Sürətli axtarış",
+        description: "Girişin altındakı “mənzil axtar” kartı: otaq, sahə və mərtəbə seçib mənzillərə keçid.",
+        where: "Ana səhifə",
+        href: "/",
+        preview: { path: "/" },
       },
     ],
   },
   {
-    group: "Mənzillər",
+    group: "Mənzillər səhifəsi",
     items: [
       {
-        key: "apartments",
-        title: "Mənzillər",
-        description:
-          "Hər mənzilin plan şəkli, fotoları və mənzil səhifəsində göstərilən bütün məlumatları.",
-      },
-      {
         key: "apartmentPage",
-        title: "Mənzillər səhifəsi",
+        title: "Başlıq",
         description: "Səhifə başlığı, alt başlıq və mərtəbə etiketi.",
+        where: "Mənzillər səhifəsinin yuxarısı",
+        href: "/menziller",
+        preview: { path: "/menziller" },
       },
       {
         key: "apartmentStatuses",
         title: "Statuslar",
         description: "Mənzil statuslarının saytda göstərilən adları.",
+        where: "Mənzil kartları və statuslar siyahısı",
+        href: "/menziller",
+        preview: { path: "/menziller" },
       },
       {
         key: "apartmentFilters",
         title: "Filtrlər",
         description:
           "Filtr seçimləri. “match” dəqiq uyğunluq, “range” isə minimum/maksimum aralığıdır.",
-      },
-    ],
-  },
-  {
-    group: "Əlaqə",
-    items: [
-      {
-        key: "contactPage",
-        title: "Əlaqə səhifəsi",
-        description: "Satış ofisi məlumatları və tez-tez verilən suallar.",
+        where: "Mənzillər səhifəsi, filtrlər sırası",
+        href: "/menziller",
+        preview: { path: "/menziller" },
       },
     ],
   },
@@ -93,6 +196,17 @@ export const SECTION_GROUPS = [
         title: "Footer",
         description:
           "Bütün səhifələrin altındakı mətnlər, düymələr, zəng formu və keçidlər. Düymə stili: dark, light və ya outline.",
+        where: "Bütün səhifələrin ən aşağısı",
+        href: "/",
+        preview: { path: "/" },
+      },
+      {
+        key: "seo",
+        title: "Google və paylaşım",
+        description: "Axtarış nəticələrində və link paylaşanda görünən başlıq və təsvirlər.",
+        where: "Google axtarışı və mesajlarda link önizləməsi",
+        href: null,
+        preview: { page: "google" },
       },
     ],
   },

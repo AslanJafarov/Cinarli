@@ -1,24 +1,51 @@
 import Image from "next/image";
 import Link from "next/link";
-import heroBuilding from "../assets/hero-building.jpg";
 import { localizeHref } from "../i18n/config";
 import { getI18n } from "../i18n/server";
+import { heroImages } from "../lib/siteImages";
+import HeroSlideshow from "./HeroSlideshow";
 
 export default async function Header() {
   const { locale, content } = await getI18n();
   const hero = content.ui.hero;
+  const photos = heroImages(content.siteImages);
 
   return (
-    <header className="relative isolate h-[max(560px,39.4vw)] w-full overflow-hidden bg-[#3f7fc4] text-white max-md:h-auto max-md:min-h-[640px] max-md:pb-[132px]">
-      {/* Background photo */}
-      <Image
-        src={heroBuilding}
-        alt={hero.imageAlt}
-        priority
-        placeholder="blur"
-        sizes="100vw"
-        className="absolute left-[4%] top-[6%] -z-20 h-auto w-[97%] max-w-none max-md:inset-0 max-md:h-full max-md:w-full max-md:object-cover max-md:object-[50%_80%]"
-      />
+    <header
+      data-admin-preview="siteImages"
+      className={`relative isolate h-[max(560px,39.4vw)] w-full overflow-hidden text-white max-md:h-auto max-md:min-h-[640px] max-md:pb-[132px] ${
+        photos.length > 0 ? "bg-[#3f7fc4]" : "bg-[#24503a]"
+      }`}
+    >
+      {/* Background photos, changing every 7 seconds. The first sample is placed for its sky;
+          the other photos simply cover the hero, keeping their right side next to the copy panel. */}
+      {photos.length > 0 && (
+        <HeroSlideshow>
+          {photos.map((photo, index) =>
+            !photo.uploaded && index === 0 ? (
+              <Image
+                key={index}
+                src={photo.image}
+                alt={hero.imageAlt}
+                priority
+                placeholder="blur"
+                sizes="100vw"
+                className="absolute left-[4%] top-[6%] h-auto w-[97%] max-w-none max-md:inset-0 max-md:h-full max-md:w-full max-md:object-cover max-md:object-[50%_80%]"
+              />
+            ) : (
+              <Image
+                key={index}
+                src={photo.image}
+                alt={hero.imageAlt}
+                priority={index === 0}
+                fill
+                sizes="100vw"
+                className="object-cover md:object-[70%_50%]"
+              />
+            ),
+          )}
+        </HeroSlideshow>
+      )}
 
       {/* Mobile overlays: dark top for the copy, the tower shows through below */}
       <div aria-hidden="true" className="absolute inset-0 -z-10 md:hidden">

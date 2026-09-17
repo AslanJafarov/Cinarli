@@ -42,6 +42,7 @@ export default async function LocationSection() {
   return (
     <section
       id="yerlesme"
+      data-admin-preview="locationInfo"
       className="w-full scroll-mt-(--nav-h) bg-[#f6f5f0] pb-[clamp(48px,3.4vw,68px)] px-page pt-[clamp(32px,2vw,40px)] text-[#1a2a22]"
     >
       {/* Heading */}

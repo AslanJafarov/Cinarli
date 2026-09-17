@@ -1,13 +1,8 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { useId, useState } from "react";
-import {
-  formatLocalPhone,
-  isValidLocalPhone,
-  normalizePhoneDigits,
-  toInternationalPhone,
-} from "../lib/phone";
+import { useId } from "react";
+import { formatLocalPhone } from "../lib/phone";
+import { useLeadForm } from "./useLeadForm";
 
 export default function FooterLeadForm({
   title,
@@ -15,51 +10,15 @@ export default function FooterLeadForm({
   submitLabel,
   successMessage,
   messages,
+  consent,
   locale,
 }) {
   const id = useId();
-  const pathname = usePathname();
-  const [digits, setDigits] = useState("");
-  const [status, setStatus] = useState("idle"); // "idle" | "sending" | "success"
-  const [error, setError] = useState(null);
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-    if (status === "sending") return;
-
-    if (!isValidLocalPhone(digits)) {
-      setError(messages.invalidPhone);
-      return;
-    }
-
-    const website = new FormData(event.currentTarget).get("website");
-    setStatus("sending");
-    setError(null);
-
-    try {
-      const response = await fetch("/api/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone: toInternationalPhone(digits),
-          source: "footer",
-          page: pathname,
-          locale,
-          website,
-        }),
-      });
-      if (!response.ok) {
-        setStatus("idle");
-        setError(response.status === 422 ? messages.invalidPhone : messages.failed);
-        return;
-      }
-      setDigits("");
-      setStatus("success");
-    } catch {
-      setStatus("idle");
-      setError(messages.failed);
-    }
-  }
+  const { digits, changeDigits, status, setStatus, error, submit } = useLeadForm({
+    source: "footer",
+    locale,
+    messages,
+  });
 
   return (
     <div>
@@ -83,7 +42,7 @@ export default function FooterLeadForm({
             </button>
           </div>
         ) : (
-          <form noValidate onSubmit={handleSubmit}>
+          <form noValidate onSubmit={submit}>
             <label
               htmlFor={`${id}-phone`}
               className="block text-[clamp(11px,0.9vw,17px)] text-[#6c6b65]"
@@ -104,10 +63,7 @@ export default function FooterLeadForm({
                 autoComplete="tel-national"
                 placeholder="__ ___ __ __"
                 value={formatLocalPhone(digits)}
-                onChange={(event) => {
-                  setDigits(normalizePhoneDigits(event.target.value));
-                  if (error) setError(null);
-                }}
+                onChange={(event) => changeDigits(event.target.value)}
                 aria-invalid={error ? "true" : undefined}
                 aria-describedby={error ? `${id}-error` : undefined}
                 className="h-[clamp(46px,3.5vw,70px)] w-full rounded-[clamp(12px,1.4vw,28px)] bg-[#f6f4ef] pl-[clamp(62px,5.2vw,104px)] pr-[clamp(16px,1.5vw,30px)] text-[clamp(14px,1.2vw,23px)] text-[#16201b] outline-none transition placeholder:text-[#9a9991] focus:ring-2 focus:ring-[#24573f]/30 aria-invalid:ring-2 aria-invalid:ring-[#9b2f22]/40"
@@ -141,6 +97,12 @@ export default function FooterLeadForm({
             >
               {status === "sending" ? messages.sending : submitLabel}
             </button>
+            <p
+              id={`${id}-consent`}
+              className="mt-[clamp(10px,0.9vw,18px)] text-[clamp(11px,0.78vw,15px)] leading-[1.5] text-[#8a8983]"
+            >
+              {consent}
+            </p>
           </form>
         )}
       </div>

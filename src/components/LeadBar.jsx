@@ -2,12 +2,20 @@
 
 import { useState } from "react";
 import { useI18n } from "../i18n/client";
+import { formatLocalPhone } from "../lib/phone";
+import { useLeadForm } from "./useLeadForm";
 
-// Sticky "liked this flat?" bar. Sending is not functional yet.
-export default function LeadBar() {
-  const { content } = useI18n();
+// Sticky "liked this flat?" bar; the lead is saved with the apartment's ID.
+export default function LeadBar({ apartmentId }) {
+  const { locale, content } = useI18n();
   const t = content.ui.leadBar;
   const [open, setOpen] = useState(true);
+  const { digits, changeDigits, status, error, submit } = useLeadForm({
+    source: "apartment",
+    apartmentId,
+    locale,
+    messages: content.ui.leadForm,
+  });
 
   if (!open) return null;
 
@@ -21,23 +29,65 @@ export default function LeadBar() {
         {t.text}
       </p>
 
-      <form className="order-3 flex w-full gap-[clamp(6px,0.7vw,14px)] md:ml-auto md:w-auto">
+      {status === "success" ? (
+        <p role="status" className="order-3 w-full font-semibold md:ml-auto md:w-auto">
+          {t.success}
+        </p>
+      ) : (
+      <form
+        noValidate
+        onSubmit={submit}
+        className="order-3 flex w-full flex-wrap gap-[clamp(6px,0.7vw,14px)] md:ml-auto md:w-auto md:max-w-[34vw]"
+      >
         <label htmlFor="lead-phone" className="sr-only">
           {t.phoneLabel}
         </label>
+        <div className="relative min-w-0 flex-1 md:w-[15vw] md:flex-none">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute left-[clamp(12px,1vw,20px)] top-1/2 -translate-y-1/2 text-[clamp(12px,0.92vw,18px)] text-[#8a8a85]"
+          >
+            +994
+          </span>
+          <input
+            id="lead-phone"
+            type="tel"
+            inputMode="numeric"
+            autoComplete="tel-national"
+            placeholder="__ ___ __ __"
+            value={formatLocalPhone(digits)}
+            onChange={(event) => changeDigits(event.target.value)}
+            aria-invalid={error ? "true" : undefined}
+            aria-describedby={error ? "lead-phone-error" : undefined}
+            className="h-11 w-full rounded-full bg-white pl-[clamp(48px,3.6vw,72px)] pr-[clamp(12px,1vw,20px)] text-[clamp(12px,0.92vw,18px)] text-[#16201b] placeholder:text-[#8a8a85] aria-invalid:ring-2 aria-invalid:ring-[#e0766a] md:h-[clamp(30px,2.1vw,42px)]"
+          />
+        </div>
+        {/* Honeypot: hidden from visitors, bots tend to fill it in */}
         <input
-          id="lead-phone"
-          type="tel"
-          placeholder="+994 __ ___ __ __"
-          className="h-11 min-w-0 flex-1 md:h-[clamp(30px,2.1vw,42px)] rounded-full bg-white px-[clamp(12px,1vw,20px)] text-[clamp(12px,0.92vw,18px)] text-[#16201b] placeholder:text-[#8a8a85] md:w-[15vw] md:flex-none"
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          className="hidden"
         />
         <button
-          type="button"
-          className="h-11 cursor-pointer rounded-full bg-[#ebe3cc] md:h-[clamp(30px,2.1vw,42px)] px-[clamp(16px,2vw,40px)] text-[clamp(11px,0.85vw,17px)] font-bold uppercase text-[#16201b]"
+          type="submit"
+          disabled={status === "sending"}
+          className="h-11 cursor-pointer rounded-full bg-[#ebe3cc] md:h-[clamp(30px,2.1vw,42px)] px-[clamp(16px,2vw,40px)] text-[clamp(11px,0.85vw,17px)] font-bold uppercase text-[#16201b] disabled:cursor-wait disabled:opacity-60"
         >
-          {t.submit}
+          {status === "sending" ? content.ui.leadForm.sending : t.submit}
         </button>
+        {error && (
+          <p id="lead-phone-error" role="alert" className="w-full text-[clamp(11px,0.8vw,15px)] text-[#f0a79d]">
+            {error}
+          </p>
+        )}
+        <p className="w-full text-[clamp(10px,0.68vw,13px)] leading-snug text-white/55">
+          {content.ui.consent}
+        </p>
       </form>
+      )}
 
       <button
         type="button"

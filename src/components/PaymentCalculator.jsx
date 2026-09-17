@@ -40,6 +40,7 @@ export default async function PaymentCalculator() {
   return (
     <section
       id="odenis"
+      data-admin-preview="paymentCalculator"
       className="w-full scroll-mt-(--nav-h) bg-[#f6f4ef] px-page pb-[clamp(56px,6vw,120px)] pt-[clamp(40px,3.6vw,72px)] text-[#16201b]"
     >
       <h2 className="text-[clamp(34px,3.95vw,76px)] leading-[1.1]">{title}</h2>

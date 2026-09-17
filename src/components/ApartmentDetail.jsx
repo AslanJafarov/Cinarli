@@ -5,7 +5,7 @@ import PlanCard from "./PlanCard";
 import { localizeHref } from "../i18n/config";
 import { translate } from "../i18n/format";
 import { getI18n } from "../i18n/server";
-import { ordinal } from "../lib/seo";
+import { ordinal } from "../i18n/format";
 
 export default async function ApartmentDetail({ apartment }) {
   const { locale, content } = await getI18n();
@@ -115,6 +115,7 @@ export default async function ApartmentDetail({ apartment }) {
         </div>
 
         {/* Links every apartment (reserved and sold too), so none is unreachable */}
+        {apartments.length > 1 && (
         <section
           aria-labelledby="other-apartments"
           className="mt-[clamp(48px,5vw,100px)]"
@@ -149,9 +150,10 @@ export default async function ApartmentDetail({ apartment }) {
               ))}
           </ul>
         </section>
+        )}
       </main>
 
-      <LeadBar />
+      <LeadBar apartmentId={apartment.id} />
       <MobileActionBar variant="contact" />
     </>
   );

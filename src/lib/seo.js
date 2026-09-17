@@ -1,7 +1,9 @@
 import { projectStats as baseStats } from "@/data/mock";
 import { defaultLocale, localizeHref, locales } from "@/i18n/config";
 import { getContent } from "@/i18n/content";
-import { translate } from "@/i18n/format";
+import { ordinal, translate } from "@/i18n/format";
+
+export { ordinal };
 
 // Public origin for canonical URLs, the sitemap and link previews.
 // Set NEXT_PUBLIC_SITE_URL in production; the fallback is a placeholder until the domain is final.
@@ -10,17 +12,6 @@ export const siteUrl = (
 ).replace(/\/+$/, "");
 
 export const absoluteUrl = (path = "/") => new URL(path, `${siteUrl}/`).toString();
-
-// Azerbaijani ordinal suffix: 1-ci, 3-cü, 6-cı, 9-cu, 40-cı, 100-cü …
-const unitSuffix = { 1: "ci", 2: "ci", 3: "cü", 4: "cü", 5: "ci", 6: "cı", 7: "ci", 8: "ci", 9: "cu" };
-const tensSuffix = { 1: "cu", 2: "ci", 3: "cu", 4: "cı", 5: "ci", 6: "cı", 7: "ci", 8: "ci", 9: "cı" };
-
-export function ordinal(value) {
-  const n = Math.abs(Math.trunc(Number(value)));
-  if (n % 10) return `${n}-${unitSuffix[n % 10]}`;
-  if (n % 100) return `${n}-${tensSuffix[(n % 100) / 10]}`;
-  return `${n}-cü`;
-}
 
 const lower = (text = "", locale = defaultLocale) =>
   String(text).toLocaleLowerCase(locale);

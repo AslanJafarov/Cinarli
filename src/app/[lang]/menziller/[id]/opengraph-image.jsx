@@ -1,4 +1,6 @@
+import { notFound } from "next/navigation";
 import { ImageResponse } from "next/og";
+import { uploadJpegDataUri } from "@/lib/media";
 import { getContent } from "@/i18n/content";
 import { translate } from "@/i18n/format";
 import { assetDataUri, ogFonts, toJpegResponse } from "@/lib/og";
@@ -26,11 +28,14 @@ const statusColors = {
 export default async function ApartmentOpengraphImage({ params }) {
   const { lang, id } = await params;
   const { apartments, apartmentStatuses, ui } = getContent(lang);
-  const apartment = apartments.find((item) => item.id === id) ?? apartments[0];
+  const apartment = apartments.find((item) => item.id === id);
+  if (!apartment) notFound();
 
+  // Uploaded plan (admin panel); the built-in files only exist for the mock sample apartments.
   const [fonts, plan] = await Promise.all([
     ogFonts(),
-    assetDataUri(planFiles[apartment.plan] ?? Object.values(planFiles)[0], "image/jpeg"),
+    (await uploadJpegDataUri(apartment.planImage?.src)) ??
+      (planFiles[apartment.plan] ? assetDataUri(planFiles[apartment.plan], "image/jpeg") : null),
   ]);
   const status = statusColors[apartment.status] ?? statusColors.available;
 
@@ -106,13 +111,19 @@ export default async function ApartmentOpengraphImage({ params }) {
             background: "#e9e6de",
           }}
         >
-          <img
-            src={plan}
-            alt=""
-            width={460}
-            height={460}
-            style={{ width: 460, height: 460, objectFit: "contain" }}
-          />
+          {plan ? (
+            <img
+              src={plan}
+              alt=""
+              width={460}
+              height={460}
+              style={{ width: 460, height: 460, objectFit: "contain" }}
+            />
+          ) : (
+            <div style={{ display: "flex", fontSize: 30, color: "#6b6a63" }}>
+              {ui.planCard.planSoon}
+            </div>
+          )}
         </div>
       </div>
     ),
