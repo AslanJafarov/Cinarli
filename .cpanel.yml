@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/chinrlfh/cinarli-app/
+    - /bin/cp -R . $DEPLOYPATH
