@@ -5,5 +5,9 @@ deployment:
     - /bin/cp package.json $DEPLOYPATH
     - /bin/cp package-lock.json $DEPLOYPATH
     - /bin/cp next.config.mjs $DEPLOYPATH
-    - /bin/cp -R app $DEPLOYPATH
+    - /bin/cp postcss.config.mjs $DEPLOYPATH
+    - /bin/cp jsconfig.json $DEPLOYPATH
+    - /bin/cp eslint.config.mjs $DEPLOYPATH
+    - /bin/cp -R src $DEPLOYPATH
     - /bin/cp -R public $DEPLOYPATH
+    - /bin/cp -R storage $DEPLOYPATH
