@@ -1,5 +1,8 @@
 name: CI
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -19,3 +22,68 @@ jobs:
           NEXT_PUBLIC_SITE_URL: https://chinarlipark.az
           NEXT_TELEMETRY_DISABLED: '1'
       - run: npm test
+
+  # The shared host cannot build the site (2 GB memory cap kills `next build`), so the build
+  # happens here and only the finished .next folder is copied to the server.
+  # Needs one repository secret: DEPLOY_SSH_KEY, the private half of an SSH key authorized in
+  # cPanel → SSH Access. Without it this job just reports that it was skipped.
+  deploy:
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    concurrency: deploy-production
+    env:
+      SSH_HOST: chinarlipark.az
+      SSH_PORT: '21098'
+      SSH_USER: chinrlfh
+      APP_DIR: repositories/Cinarli
+    steps:
+      - id: key
+        run: |
+          if [ -n "${{ secrets.DEPLOY_SSH_KEY }}" ]; then echo "present=true" >> "$GITHUB_OUTPUT"
+          else echo "::notice::DEPLOY_SSH_KEY secret is not set; skipping deployment."; echo "present=false" >> "$GITHUB_OUTPUT"; fi
+      - if: steps.key.outputs.present == 'true'
+        uses: actions/checkout@v4
+      - if: steps.key.outputs.present == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - if: steps.key.outputs.present == 'true'
+        run: npm ci
+      - if: steps.key.outputs.present == 'true'
+        run: npm run build && rm -rf .next/cache && tar -czf cinarli-next.tar.gz .next
+        env:
+          NEXT_PUBLIC_SITE_URL: https://chinarlipark.az
+          NEXT_TELEMETRY_DISABLED: '1'
+      - if: steps.key.outputs.present == 'true'
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "$SSH_PORT" "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+      - if: steps.key.outputs.present == 'true'
+        run: scp -P "$SSH_PORT" -i ~/.ssh/deploy_key cinarli-next.tar.gz "$SSH_USER@$SSH_HOST:$APP_DIR/cinarli-next.tar.gz"
+      - if: steps.key.outputs.present == 'true'
+        run: |
+          ssh -p "$SSH_PORT" -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" bash -s "$GITHUB_SHA" <<'REMOTE'
+            set -euo pipefail
+            cd ~/repositories/Cinarli
+            # Server code must match the commit the build came from (server.js, public/, next.config.mjs).
+            git fetch --quiet origin main && git checkout --quiet --force "$1"
+            source ~/nodevenv/repositories/Cinarli/24/bin/activate
+            npm install --no-audit --no-fund
+            rm -rf .next-build && mkdir .next-build
+            tar -xzf cinarli-next.tar.gz -C .next-build --strip-components=1
+            test -f .next-build/BUILD_ID
+            rm -rf .next-previous
+            test ! -d .next || mv .next .next-previous
+            mv .next-build .next
+            rm -f cinarli-next.tar.gz
+            mkdir -p tmp && touch tmp/restart.txt
+            echo "Deployed $1"
+          REMOTE
+      - if: steps.key.outputs.present == 'true'
+        run: |
+          sleep 20
+          curl -sk --max-time 30 https://chinarlipark.az/ | grep -q 'id="calc-result"' && echo "Live site serves the new build." || { echo "::warning::Live check did not find the new build yet; it may need a moment."; }
