@@ -48,3 +48,6 @@ next-env.d.ts
 
 # Passenger restart trigger written by .cpanel.yml on each deploy
 /tmp/
+
+# Passenger error log written next to server.js on cPanel
+/stderr.log
