@@ -1,0 +1,18 @@
+{
+  "concurrentSiteWrites": {
+    "attempts": 10,
+    "lost": 9,
+    "writeErrors": []
+  },
+  "corruptLeadsRead": [],
+  "corruptLeadsAfterWrite": 1,
+  "phoneTruncation": {
+    "input": "5012345678",
+    "normalized": "501234567",
+    "accepted": true
+  },
+  "invalidContentSaved": {
+    "apartments": null,
+    "gallery": 42
+  }
+}

@@ -1,15 +1,9 @@
-import { projectStats as baseStats } from "@/data/mock";
+import { siteUrl } from "./siteUrl";
 import { defaultLocale, localizeHref, locales } from "@/i18n/config";
 import { getContent } from "@/i18n/content";
 import { ordinal, translate } from "@/i18n/format";
 
-export { ordinal };
-
-// Public origin for canonical URLs, the sitemap and link previews.
-// Set NEXT_PUBLIC_SITE_URL in production; the fallback is a placeholder until the domain is final.
-export const siteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL || "https://cinarli.az"
-).replace(/\/+$/, "");
+export { ordinal, siteUrl };
 
 export const absoluteUrl = (path = "/") => new URL(path, `${siteUrl}/`).toString();
 
@@ -124,7 +118,7 @@ const geoCoordinates = (locale) => {
 export function complexJsonLd(locale = defaultLocale) {
   const { seo, advantages } = getContent(locale);
   // Found by its Azerbaijani label; the number itself is the same in every language.
-  const units = Number(baseStats.find((stat) => stat.label === "mənzil")?.value);
+  const units = Number(getContent(defaultLocale).projectStats.find((stat) => stat.label === "mənzil")?.value);
 
   return {
     "@type": "ApartmentComplex",
@@ -156,7 +150,7 @@ export function salesOfficeJsonLd(locale = defaultLocale) {
     name: `${seo.siteName} — ${lower(office.label, locale)}`,
     url: pageUrl(locale, "/elaqe"),
     image: pageUrl(locale, "/opengraph-image"),
-    telephone: office.phoneHref.replace(/^tel:/, ""),
+    telephone: office.phoneHref ? office.phoneHref.replace(/^tel:/, "") : undefined,
     address: postalAddress(locale),
     geo: geoCoordinates(locale),
     areaServed: "Bakı",

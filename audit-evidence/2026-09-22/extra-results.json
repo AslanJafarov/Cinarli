@@ -1,0 +1,55 @@
+{
+  "/": {
+    "status": 200,
+    "canonical": "https://cinarli.az",
+    "placeholderPhone": true,
+    "emptyCatalogue": false,
+    "advertisesPlaceholderOrigin": true,
+    "securityHeaders": {
+      "strict-transport-security": null,
+      "content-security-policy": null,
+      "x-frame-options": null,
+      "referrer-policy": null
+    }
+  },
+  "/menziller": {
+    "status": 200,
+    "canonical": "https://cinarli.az/menziller",
+    "placeholderPhone": true,
+    "emptyCatalogue": false,
+    "advertisesPlaceholderOrigin": true,
+    "securityHeaders": {
+      "strict-transport-security": null,
+      "content-security-policy": null,
+      "x-frame-options": null,
+      "referrer-policy": null
+    }
+  },
+  "/robots.txt": {
+    "status": 200,
+    "placeholderPhone": false,
+    "emptyCatalogue": false,
+    "advertisesPlaceholderOrigin": true,
+    "securityHeaders": {
+      "strict-transport-security": null,
+      "content-security-policy": null,
+      "x-frame-options": null,
+      "referrer-policy": null
+    }
+  },
+  "/sitemap.xml": {
+    "status": 200,
+    "placeholderPhone": false,
+    "emptyCatalogue": false,
+    "advertisesPlaceholderOrigin": true,
+    "securityHeaders": {
+      "strict-transport-security": null,
+      "content-security-policy": null,
+      "x-frame-options": null,
+      "referrer-policy": null
+    }
+  },
+  "csv": {
+    "formulaPreserved": true
+  }
+}

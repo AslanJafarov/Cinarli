@@ -112,9 +112,10 @@ function NewsItem({ item, index, list, onChange }) {
                 value={item.title ?? ""}
                 onChange={(event) => {
                   const title = event.target.value;
-                  // The address follows the title until it's edited by hand.
-                  const autoId = !item.id || item.id === slugify(item.title ?? "");
-                  patch(autoId ? { title, id: slugify(title) } : { title });
+                  patch({ title });
+                }}
+                onBlur={() => {
+                  if (!item.id) patch({ id: slugify(item.title) });
                 }}
                 className={inputClass}
               />

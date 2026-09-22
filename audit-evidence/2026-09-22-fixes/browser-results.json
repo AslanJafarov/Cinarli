@@ -1,0 +1,25 @@
+{
+  "noFakeContacts": true,
+  "calculation": "Sample plan\n\n5 917 AZN\n\nmonthly payment\n\nDown payment\n15%\nRemaining amount\n213 000 AZN\nTerm\n36 months\nTALK TO A SALES MANAGER",
+  "calculatorCallbackFocus": true,
+  "reducedMotion": true,
+  "languageLinks": [
+    "/menziller?rooms=3#selected",
+    "/ru/menziller?rooms=3#selected",
+    "/en/menziller?rooms=3#selected",
+    "/menziller?rooms=3#selected",
+    "/ru/menziller?rooms=3#selected",
+    "/en/menziller?rooms=3#selected",
+    "/menziller?rooms=3#selected",
+    "/ru/menziller?rooms=3#selected",
+    "/en/menziller?rooms=3#selected"
+  ],
+  "apartmentCallback": {
+    "id": "A-09-27",
+    "locale": "en",
+    "source": "apartment"
+  },
+  "planKeyboard": true,
+  "galleryFocus": true,
+  "mobileFocus": true
+}

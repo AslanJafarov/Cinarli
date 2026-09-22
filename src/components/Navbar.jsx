@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useI18n } from "../i18n/client";
 import { localeNames, locales, localizeHref, stripLocale } from "../i18n/config";
+import { containDialogTab } from "../lib/dialogFocus";
 
 const NAV_ITEMS = [
   // Plain anchors so the browser smooth-scrolls when already on the home page.
@@ -50,25 +51,42 @@ function NavItem({ item, className, style, onClick }) {
   );
 }
 
+function subscribeLocation(callback) {
+  window.addEventListener("hashchange", callback);
+  window.addEventListener("popstate", callback);
+  return () => {
+    window.removeEventListener("hashchange", callback);
+    window.removeEventListener("popstate", callback);
+  };
+}
+
 // AZ / RU / EN — keeps the visitor on the same page in the chosen language.
 function LanguageSwitcher({ locale, label, className = "", itemClassName = "", onNavigate }) {
   // Strip any locale prefix so the server and client render identical links.
   const basePath = stripLocale(usePathname());
+
+  const suffix = useSyncExternalStore(
+    subscribeLocation,
+    () => window.location.search + window.location.hash,
+    () => "",
+  );
 
   return (
     <nav aria-label={label} className={`flex items-center ${className}`}>
       {locales.map((code) => {
         const current = code === locale;
         return (
-          <Link
+          <a
             key={code}
-            href={localizeHref(code, basePath)}
-            scroll={false}
+            href={localizeHref(code, basePath) + suffix}
             hrefLang={code}
             lang={code}
             title={localeNames[code]}
             aria-current={current ? "true" : undefined}
-            onClick={onNavigate}
+            onClick={(event) => {
+              event.currentTarget.href = localizeHref(code, basePath) + window.location.search + window.location.hash;
+              onNavigate?.();
+            }}
             className={`uppercase transition-opacity duration-300 ${itemClassName} ${
               current
                 ? "underline decoration-2 underline-offset-[6px]"
@@ -76,7 +94,7 @@ function LanguageSwitcher({ locale, label, className = "", itemClassName = "", o
             }`}
           >
             {code}
-          </Link>
+          </a>
         );
       })}
     </nav>
@@ -96,6 +114,7 @@ export default function Navbar({ variant = "transparent", activePage }) {
     getActiveSection,
     getServerSnapshot,
   );
+  const menuRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const dark = variant === "dark";
   const scrolled = !dark && active !== "top";
@@ -109,7 +128,10 @@ export default function Navbar({ variant = "transparent", activePage }) {
 
   // Lock page scroll and close on Escape while the mobile menu is open.
   useEffect(() => {
-    if (!menuOpen) return;
+    const dialog = menuRef.current;
+    if (!menuOpen) { dialog.close(); return; }
+    dialog.showModal();
+    const focusFrame = requestAnimationFrame(() => dialog.querySelector("button")?.focus());
     const root = document.documentElement;
     const previousOverflow = root.style.overflow;
     root.style.overflow = "hidden";
@@ -120,6 +142,8 @@ export default function Navbar({ variant = "transparent", activePage }) {
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
+      cancelAnimationFrame(focusFrame);
+      dialog.close();
       root.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
@@ -204,14 +228,15 @@ export default function Navbar({ variant = "transparent", activePage }) {
       </div>
 
       {/* Mobile menu */}
-      <div
+      <dialog
+        ref={menuRef}
+        onCancel={(event) => { event.preventDefault(); setMenuOpen(false); }}
+        onKeyDown={(event) => containDialogTab(event, event.currentTarget)}
         id="mobile-menu"
-        role="dialog"
         aria-modal="true"
         aria-label={t.menuLabel}
-        inert={!menuOpen}
-        className={`fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-[#13271f] px-page pb-[max(24px,env(safe-area-inset-bottom))] text-white transition-[opacity,visibility] duration-300 ease-butter lg:hidden ${
-          menuOpen ? "visible opacity-100" : "invisible opacity-0"
+        className={`fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none border-0 pt-0 z-[60] flex flex-col overflow-y-auto bg-[#13271f] px-page pb-[max(24px,env(safe-area-inset-bottom))] text-white transition-opacity duration-300 ease-butter [&:not([open])]:hidden lg:hidden ${
+          menuOpen ? "opacity-100" : "opacity-0"
         }`}
       >
         <div className="flex h-(--nav-h) shrink-0 items-center justify-between">
@@ -263,23 +288,23 @@ export default function Navbar({ variant = "transparent", activePage }) {
             {t.consult}
           </Link>
           <div className="grid grid-cols-2 gap-3">
-            <a
+            {phoneHref && (<a
               href={phoneHref}
               className="flex h-12 items-center justify-center rounded-full border border-white/30 text-[13px] uppercase tracking-[0.04em]"
             >
               {t.call}
-            </a>
-            <a
+            </a>)}
+            {whatsappHref && (<a
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
               className="flex h-12 items-center justify-center rounded-full bg-[#24573f] text-[13px] uppercase tracking-[0.04em]"
             >
               WhatsApp
-            </a>
+            </a>)}
           </div>
         </div>
-      </div>
+      </dialog>
     </>
   );
 }

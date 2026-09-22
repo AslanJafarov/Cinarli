@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Faq from "./Faq";
+import CallbackLink from "./CallbackLink";
 import { localizeHref } from "../i18n/config";
 import { getI18n } from "../i18n/server";
 
@@ -64,20 +65,20 @@ export default async function ContactPage() {
           </dl>
 
           <div className="mt-[clamp(32px,3.6vw,72px)] grid gap-[clamp(10px,1.2vw,24px)] max-md:mt-8 max-md:gap-3 sm:grid-cols-2">
-            <a
+            {office.phoneHref && (<a
               href={office.phoneHref}
               className="flex h-[clamp(48px,3.9vw,76px)] items-center justify-center rounded-full bg-[#ebe3c6] text-[clamp(12px,0.95vw,18px)] uppercase tracking-[0.03em] max-md:text-[13px] text-[#16201b]"
             >
               {ui.nav.call}
-            </a>
-            <a
+            </a>)}
+            {office.whatsappHref && (<a
               href={office.whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
               className="flex h-[clamp(48px,3.9vw,76px)] items-center justify-center rounded-full bg-[#24573f] text-[clamp(12px,0.95vw,18px)] uppercase tracking-[0.03em] max-md:text-[13px] text-white"
             >
               WhatsApp
-            </a>
+            </a>)}
           </div>
         </section>
 
@@ -85,13 +86,12 @@ export default async function ContactPage() {
         <div className="lg:pt-[0.6vw]">
           <Faq title={faqTitle} items={faqs} />
 
-          {/* Not functional yet */}
-          <button
-            type="button"
-            className="mt-[clamp(32px,3.2vw,64px)] h-[clamp(48px,3.9vw,76px)] w-full cursor-pointer rounded-full bg-[#13271f] px-8 text-[clamp(12px,0.95vw,18px)] uppercase tracking-[0.03em] max-md:text-[13px] text-white sm:w-[45%]"
+          <CallbackLink
+            source="appointment"
+            className="mt-[clamp(32px,3.2vw,64px)] flex items-center justify-center h-[clamp(48px,3.9vw,76px)] w-full cursor-pointer rounded-full bg-[#13271f] px-8 text-[clamp(12px,0.95vw,18px)] uppercase tracking-[0.03em] max-md:text-[13px] text-white sm:w-[45%]"
           >
             {meetingLabel}
-          </button>
+          </CallbackLink>
         </div>
       </div>
     </main>

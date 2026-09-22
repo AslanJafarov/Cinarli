@@ -389,7 +389,7 @@ export const contactPage = {
   meetingLabel: "Görüş təyin et",
 };
 
-// Displayed values only; the calculator is not functional yet.
+// Initial values for the illustrative payment calculator.
 export const paymentCalculator = {
   title: "Ödənişinizi hesablayın.",
   subtitle:

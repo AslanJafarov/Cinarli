@@ -25,6 +25,7 @@ const page = async () => {
       initialLeads={await readLeads()}
       initialMode={store.mode}
       initialSavedAt={store.savedAt}
+      initialRevision={store.revision}
     />
   );
 };

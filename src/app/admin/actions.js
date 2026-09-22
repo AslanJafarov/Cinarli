@@ -44,21 +44,29 @@ export async function logout() {
   redirect("/admin/login");
 }
 
-export async function saveSiteData(data, translations) {
+export async function saveSiteData(data, translations, expectedRevision) {
   await requireAdmin();
   if (!data || typeof data !== "object" || Array.isArray(data)) {
     return { error: "Məlumatlar düzgün deyil." };
   }
-  const store = await saveData(data, translations);
-  refreshSite();
-  return { savedAt: store.savedAt };
+  try {
+    const store = await saveData(data, translations, expectedRevision);
+    refreshSite();
+    return { savedAt: store.savedAt, revision: store.revision };
+  } catch (error) {
+    return { error: error.code ? "Yadda saxlanmadı. Saxlama qovluğunu və faylları yoxlayın." : error.message };
+  }
 }
 
-export async function setSiteMode(mode) {
+export async function setSiteMode(mode, expectedRevision) {
   await requireAdmin();
-  const store = await saveMode(mode);
-  refreshSite();
-  return { mode: store.mode };
+  try {
+    const store = await saveMode(mode, expectedRevision);
+    refreshSite();
+    return { mode: store.mode, revision: store.revision };
+  } catch (error) {
+    return { error: error.code ? "Rejim dəyişmədi. Saxlama qovluğunu və faylları yoxlayın." : error.message };
+  }
 }
 
 // Leads ("Müraciətlər"): changes apply immediately, without the panel's save button.

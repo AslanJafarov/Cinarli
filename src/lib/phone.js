@@ -7,12 +7,12 @@ export function normalizePhoneDigits(input) {
   let digits = String(input ?? "").replace(/\D/g, "");
   if (digits.length > 9 && digits.startsWith("994")) digits = digits.slice(3);
   if (digits.startsWith("0")) digits = digits.slice(1);
-  return digits.slice(0, 9);
+  return digits;
 }
 
 // "501234567" -> "50 123 45 67"
 export function formatLocalPhone(digits) {
-  return [digits.slice(0, 2), digits.slice(2, 5), digits.slice(5, 7), digits.slice(7, 9)]
+  return [digits.slice(0, 2), digits.slice(2, 5), digits.slice(5, 7), digits.slice(7)]
     .filter(Boolean)
     .join(" ");
 }

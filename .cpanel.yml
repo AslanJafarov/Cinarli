@@ -1,13 +1,11 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/chinrlfh/cinarli-app/
-    - /bin/cp package.json $DEPLOYPATH
-    - /bin/cp package-lock.json $DEPLOYPATH
-    - /bin/cp next.config.mjs $DEPLOYPATH
-    - /bin/cp postcss.config.mjs $DEPLOYPATH
-    - /bin/cp jsconfig.json $DEPLOYPATH
-    - /bin/cp eslint.config.mjs $DEPLOYPATH
-    - /bin/cp -R src $DEPLOYPATH
-    - /bin/cp -R public $DEPLOYPATH
-    - /bin/cp -R storage $DEPLOYPATH
+    # The Node.js app runs directly from this repository (cPanel > Setup Node.js App,
+    # application root "repositories/Cinarli", startup file "server.js").
+    # Build in place with that app's Node environment, then ask Passenger to restart it.
+    - export APP=/home/chinrlfh/repositories/Cinarli
+    - source /home/chinrlfh/nodevenv/repositories/Cinarli/24/bin/activate
+    - cd $APP && npm ci
+    - cd $APP && npm run build
+    - mkdir -p $APP/tmp && touch $APP/tmp/restart.txt

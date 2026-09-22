@@ -65,6 +65,7 @@ const en = {
       call: "Call us",
     },
     gallery: {
+      zoom: "Zoom in / out",
       photos: "photos",
       videos: "videos",
       back: "Home",
@@ -79,6 +80,7 @@ const en = {
       imageAlt: "Residential building under construction",
     },
     payment: {
+      invalid: "Enter a positive price and a whole number of months. The down payment must be between zero and the price.",
       price: "Apartment price",
       downPayment: "Down payment",
       term: "Term",
@@ -172,6 +174,7 @@ const en = {
       contact: "Contact",
     },
     leadForm: {
+      rateLimited: "Too many requests. Please try again in a minute.",
       invalidPhone: "Enter the full number, e.g. 50 123 45 67.",
       failed: "Couldn't send. Please try again in a moment.",
       sending: "Sending…",

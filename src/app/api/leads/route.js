@@ -1,5 +1,7 @@
 import { addLead } from "@/lib/leads";
 import { isValidInternationalPhone } from "@/lib/phone";
+import { BodyTooLarge, readJsonBody } from "@/lib/requestBody";
+import { leadClient, limitLead } from "@/lib/leadLimit";
 
 const text = (value, max) => (typeof value === "string" ? value.trim().slice(0, max) : "");
 
@@ -7,10 +9,15 @@ const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_c
 
 // Receives "call me back" requests from the lead forms and saves them for the admin panel.
 export async function POST(request) {
+  const retryMs = limitLead(leadClient(request.headers));
+  if (retryMs) return Response.json({ error: "Çox sayda sorğu. Bir az sonra yenidən cəhd edin." }, {
+    status: 429, headers: { "Retry-After": String(Math.ceil(retryMs / 1000)) },
+  });
   let body;
   try {
-    body = await request.json();
-  } catch {
+    body = await readJsonBody(request);
+  } catch (error) {
+    if (error instanceof BodyTooLarge) return Response.json({ error: "Sorğu çox böyükdür." }, { status: 413 });
     return Response.json({ error: "Sorğu oxunmadı." }, { status: 400 });
   }
 

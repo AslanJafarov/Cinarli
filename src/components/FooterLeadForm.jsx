@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useEffect, useId, useState } from "react";
 import { formatLocalPhone } from "../lib/phone";
 import { useLeadForm } from "./useLeadForm";
 
@@ -14,14 +14,25 @@ export default function FooterLeadForm({
   locale,
 }) {
   const id = useId();
+  const [source, setSource] = useState("footer");
   const { digits, changeDigits, status, setStatus, error, submit } = useLeadForm({
-    source: "footer",
+    source,
     locale,
     messages,
   });
 
+  useEffect(() => {
+    const openForm = (event) => {
+      if (event.detail.target !== "callback") return;
+      setSource(event.detail.source);
+      setStatus("idle");
+    };
+    window.addEventListener("open-callback", openForm);
+    return () => window.removeEventListener("open-callback", openForm);
+  }, [setStatus]);
+
   return (
-    <div>
+    <div id="callback" tabIndex={-1} className="scroll-mt-(--nav-h)">
       <h2 className="text-[clamp(17px,1.4vw,28px)] leading-tight">{title}</h2>
 
       <div className="mt-[clamp(14px,1.55vw,30px)] rounded-[clamp(18px,2vw,40px)] bg-white p-[clamp(18px,1.85vw,36px)]">

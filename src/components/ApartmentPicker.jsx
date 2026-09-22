@@ -130,7 +130,7 @@ export default function ApartmentPicker() {
             text={ui.empty.noApartmentsText}
             actions={[
               { href: localizeHref(locale, "/elaqe"), label: ui.empty.contact, primary: true },
-              { href: phoneHref, label: ui.empty.call, external: true },
+              ...(phoneHref ? [{ href: phoneHref, label: ui.empty.call, external: true }] : []),
             ]}
             className="mt-[clamp(20px,2.4vw,48px)] animate-rise-in [animation-delay:120ms] motion-reduce:animate-none"
           />
@@ -378,12 +378,12 @@ export default function ApartmentPicker() {
               ))}
             </dl>
 
-            <button
-              type="button"
-              className="mt-auto h-[clamp(44px,3.6vw,70px)] w-full shrink-0 cursor-pointer rounded-full bg-[#ebe3cc] text-[clamp(13px,1.02vw,20px)] font-bold uppercase text-[#16201b]"
+            <Link
+              href={`${apartmentHref(selected.id)}#apartment-callback`}
+              className="mt-auto flex items-center justify-center h-[clamp(44px,3.6vw,70px)] w-full shrink-0 cursor-pointer rounded-full bg-[#ebe3cc] text-[clamp(13px,1.02vw,20px)] font-bold uppercase text-[#16201b]"
             >
               {t.apply}
-            </button>
+            </Link>
           </aside>
         </div>
         </>

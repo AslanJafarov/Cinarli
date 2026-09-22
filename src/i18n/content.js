@@ -1,5 +1,6 @@
 import * as mockData from "../data/mock";
 import { getSiteData } from "../lib/store";
+import { withPublicContacts } from "../lib/publicContacts";
 import { pairTexts, translateValue } from "../lib/translatable";
 import { defaultLocale, hasLocale } from "./config";
 import { ui as azUi } from "./translations/az";
@@ -93,6 +94,6 @@ export function getContent(locale) {
 
   if (!cache.has(siteData.data)) cache.set(siteData.data, new Map());
   const byLocale = cache.get(siteData.data);
-  if (!byLocale.has(key)) byLocale.set(key, localize(siteData, key));
+  if (!byLocale.has(key)) byLocale.set(key, withPublicContacts(localize(siteData, key)));
   return byLocale.get(key);
 }

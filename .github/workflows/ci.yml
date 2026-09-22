@@ -1,0 +1,21 @@
+name: CI
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      # Deliberately no admin credentials during the build (H03 regression).
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_SITE_URL: https://chinarlipark.az
+          NEXT_TELEMETRY_DISABLED: '1'
+      - run: npm test

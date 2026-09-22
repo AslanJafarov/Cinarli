@@ -64,6 +64,7 @@ export const ui = {
     call: "Zəng et",
   },
   gallery: {
+    zoom: "Böyüt / kiçilt",
     photos: "foto",
     videos: "video",
     back: "Ana səhifə",
@@ -78,6 +79,7 @@ export const ui = {
     imageAlt: "Tikinti gedən yaşayış binası",
   },
   payment: {
+    invalid: "Müsbət qiymət və tam ay sayı daxil edin. İlkin ödəniş 0 ilə mənzil dəyəri arasında olmalıdır.",
     price: "Mənzil dəyəri",
     downPayment: "İlkin ödəniş",
     term: "Müddət",
@@ -171,6 +173,7 @@ export const ui = {
     contact: "Əlaqə",
   },
   leadForm: {
+    rateLimited: "Çox sayda sorğu göndərilib. Bir dəqiqə sonra yenidən cəhd edin.",
     invalidPhone: "Nömrəni tam daxil edin, məsələn: 50 123 45 67.",
     failed: "Göndərmək alınmadı. Bir az sonra yenidən cəhd edin.",
     sending: "Göndərilir…",

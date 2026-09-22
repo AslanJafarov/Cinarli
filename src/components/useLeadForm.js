@@ -31,6 +31,7 @@ export function useLeadForm({ source, apartmentId = null, locale, messages }) {
 
     if (!isValidLocalPhone(digits)) {
       setError(messages.invalidPhone);
+      event.currentTarget.querySelector('input[type="tel"]')?.focus();
       return;
     }
 
@@ -56,7 +57,7 @@ export function useLeadForm({ source, apartmentId = null, locale, messages }) {
       });
       if (!response.ok) {
         setStatus("idle");
-        setError(response.status === 422 ? messages.invalidPhone : messages.failed);
+        setError(response.status === 422 ? messages.invalidPhone : response.status === 429 ? messages.rateLimited : messages.failed);
         return;
       }
       setDigits("");

@@ -1,0 +1,137 @@
+{
+  "calculator": {
+    "price": "250000",
+    "before": "Nümunə plan\n\n4 111 AZN\n\naylıq ödəniş\n\nİlkin ödəniş\n20%\nQalıq məbləğ\n148 000 AZN\nMüddət\n36 ay\nSATIŞ MENECERİ İLƏ DANIŞ",
+    "after": "Nümunə plan\n\n4 111 AZN\n\naylıq ödəniş\n\nİlkin ödəniş\n20%\nQalıq məbləğ\n148 000 AZN\nMüddət\n36 ay\nSATIŞ MENECERİ İLƏ DANIŞ"
+  },
+  "languageLinks": [
+    {
+      "language": "az",
+      "href": "/menziller"
+    },
+    {
+      "language": "ru",
+      "href": "/ru/menziller"
+    },
+    {
+      "language": "en",
+      "href": "/en/menziller"
+    },
+    {
+      "language": "az",
+      "href": "/menziller"
+    },
+    {
+      "language": "ru",
+      "href": "/ru/menziller"
+    },
+    {
+      "language": "en",
+      "href": "/en/menziller"
+    },
+    {
+      "language": "az",
+      "href": "/menziller"
+    },
+    {
+      "language": "ru",
+      "href": "/ru/menziller"
+    },
+    {
+      "language": "en",
+      "href": "/en/menziller"
+    }
+  ],
+  "catalogue": {
+    "heading": "Choose your apartment",
+    "selects": [
+      {
+        "id": "filter-building",
+        "value": "all"
+      },
+      {
+        "id": "filter-rooms",
+        "value": "3"
+      },
+      {
+        "id": "filter-area",
+        "value": "all"
+      },
+      {
+        "id": "filter-floor",
+        "value": "all"
+      },
+      {
+        "id": "filter-status",
+        "value": "all"
+      }
+    ]
+  },
+  "galleryButtons": [
+    "Fotonu böyüt: Yaşıllıq fonunda yaşayış binası",
+    "Fotonu böyüt: Açıq tonlarda geniş qonaq otağı",
+    "Fotonu böyüt: Yaşıl terraslı ağ yaşayış binası",
+    "Fotonu böyüt: Mərmər səthli müasir mətbəx"
+  ],
+  "galleryFocus": {
+    "afterOpen": {
+      "tag": "BUTTON",
+      "label": "Fotonu böyüt: Yaşıllıq fonunda yaşayış binası",
+      "insideDialog": false
+    },
+    "afterTab": {
+      "tag": "BUTTON",
+      "label": "Fotonu böyüt: Açıq tonlarda geniş qonaq otağı",
+      "insideDialog": false
+    }
+  },
+  "mobile": {
+    "width": {
+      "viewport": 390,
+      "document": 390
+    },
+    "menuFocus": {
+      "label": "Menu",
+      "insideDialog": false
+    }
+  },
+  "faqDeleteAll": {
+    "originalCount": 5,
+    "afterDeletingAll": 0,
+    "after": {
+      "text": "TEZ-TEZ VERİLƏN SUALLAR\n1\nSətir əlavə et",
+      "fields": [
+        {
+          "id": "contactPage-faqs-0",
+          "value": ""
+        }
+      ]
+    }
+  },
+  "leadForm": {
+    "invalid": {
+      "error": "Nömrəni tam daxil edin, məsələn: 50 123 45 67.",
+      "invalid": "true",
+      "focus": ""
+    },
+    "failure": {
+      "error": "Göndərmək alınmadı. Bir az sonra yenidən cəhd edin.",
+      "value": "50 123 45 67",
+      "disabled": false
+    },
+    "success": [
+      "Təşəkkürlər! Satış komandamız tezliklə sizinlə əlaqə saxlayacaq.Başqa nömrə göndər"
+    ]
+  },
+  "quickSearchFocus": {
+    "id": "quick-search-area",
+    "opacity": "0",
+    "focusVisible": true,
+    "parentShadow": "none",
+    "parentOutline": "none"
+  },
+  "reducedMotion": {
+    "requested": true,
+    "scrollBehavior": "smooth"
+  }
+}

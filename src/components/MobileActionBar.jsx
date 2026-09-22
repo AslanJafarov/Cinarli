@@ -21,42 +21,43 @@ export default function MobileActionBar({
     "sticky bottom-0 z-40 bg-[#13271f] px-page pb-[max(12px,env(safe-area-inset-bottom))] pt-3 text-white md:hidden";
 
   if (variant === "contact") {
+    if (!phoneHref && !whatsappHref) return null;
     return (
-      <div className={`${barClass} grid grid-cols-2 gap-3`}>
-        <a
+      <div className={`${barClass} grid grid-flow-col auto-cols-fr gap-3`}>
+        {phoneHref && (<a
           href={phoneHref}
           className="flex h-12 items-center justify-center rounded-full bg-[#ebe3c6] text-[13px] uppercase tracking-[0.04em] text-[#16201b]"
         >
           {nav.call}
-        </a>
-        <a
+        </a>)}
+        {whatsappHref && (<a
           href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
           className="flex h-12 items-center justify-center rounded-full bg-[#24573f] text-[13px] uppercase tracking-[0.04em]"
         >
           WhatsApp
-        </a>
+        </a>)}
       </div>
     );
   }
 
   return (
-    <div className={`${barClass} grid grid-cols-3 items-center gap-2`}>
-      <a
+    <div className={`${barClass} grid grid-flow-col auto-cols-fr items-center gap-2`}>
+      {phoneHref && (<a
         href={phoneHref}
         className="flex h-12 items-center justify-center text-[13px] uppercase tracking-[0.04em]"
       >
         {mobileBar.call}
-      </a>
-      <a
+      </a>)}
+      {whatsappHref && (<a
         href={whatsappHref}
         target="_blank"
         rel="noopener noreferrer"
         className="flex h-12 items-center justify-center text-[13px] uppercase tracking-[0.04em]"
       >
         WhatsApp
-      </a>
+      </a>)}
       <Link
         href={localizeHref(locale, primaryHref)}
         className="flex h-12 items-center justify-center rounded-full bg-[#ebe3c6] px-2 text-[13px] uppercase tracking-[0.04em] text-[#16201b]"

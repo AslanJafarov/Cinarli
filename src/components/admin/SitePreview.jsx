@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { siteUrl } from "../../lib/siteUrl";
 
 const MAX_HEIGHT = 440;
 
@@ -129,7 +130,7 @@ function GooglePreview({ seo }) {
         </span>
         <span className="leading-tight">
           <span className="block text-sm text-[#202124]">{seo?.siteName}</span>
-          <span className="block text-xs text-[#4d5156]">https://cinarli.az</span>
+          <span className="block text-xs text-[#4d5156]">{siteUrl}</span>
         </span>
       </div>
       <p className="pt-1 text-xl leading-snug text-[#1a0dab]">{home.title}</p>
@@ -145,7 +146,7 @@ export default function SitePreview({ section, data, mode, version }) {
   const url =
     preview.page === "google"
       ? "google.com"
-      : `cinarli.az${preview.path === "/" ? "" : preview.path}`;
+      : `${new URL(siteUrl).host}${preview.path === "/" ? "" : preview.path}`;
 
   return (
     // Phone-sized pages get a phone-sized window instead of being blown up.

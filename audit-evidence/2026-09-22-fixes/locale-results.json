@@ -1,0 +1,18 @@
+{
+  "az": {
+    "visibleFilterFocus": true,
+    "appointmentCallback": true,
+    "canonical": "https://chinarlipark.az/"
+  },
+  "ru": {
+    "visibleFilterFocus": true,
+    "appointmentCallback": true,
+    "canonical": "https://chinarlipark.az/ru"
+  },
+  "en": {
+    "visibleFilterFocus": true,
+    "appointmentCallback": true,
+    "canonical": "https://chinarlipark.az/en"
+  },
+  "publishedNewsUrlStable": true
+}

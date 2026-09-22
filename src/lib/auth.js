@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 
 // Server-only. Credentials come from ADMIN_USERNAME / ADMIN_PASSWORD / ADMIN_SESSION_SECRET
 // (see .env.local); without them nobody can log in.
@@ -44,6 +45,7 @@ export async function endSession() {
 }
 
 export async function isLoggedIn() {
+  await connection();
   if (!isAuthConfigured()) return false;
   const value = (await cookies()).get(COOKIE)?.value;
   if (!value) return false;

@@ -13,6 +13,7 @@ import NewsEditor from "./NewsEditor";
 import SiteImagesEditor from "./SiteImagesEditor";
 import TranslationsEditor from "./TranslationsEditor";
 import { buttonClass, Icon } from "./ui";
+import { validateContent } from "../../lib/contentValidation";
 
 // Keeps only sections the website knows about, falling back to the original data.
 function mergeKnownSections(initialData, incoming) {
@@ -57,6 +58,7 @@ export default function AdminDashboard({
   initialLeads,
   initialMode,
   initialSavedAt,
+  initialRevision,
 }) {
   const [data, setData] = useState(initialData);
   const [savedData, setSavedData] = useState(initialData);
@@ -65,6 +67,7 @@ export default function AdminDashboard({
   const [leads, setLeads] = useState(initialLeads);
   const [savedAt, setSavedAt] = useState(initialSavedAt);
   const [mode, setMode] = useState(initialMode);
+  const [revision, setRevision] = useState(initialRevision);
   const [saving, startSaving] = useTransition();
   const [switchingMode, startSwitchingMode] = useTransition();
   const [activeKey, setActiveKey] = useState("leads");
@@ -97,7 +100,7 @@ export default function AdminDashboard({
   const showNotice = (type, text) => {
     const id = Date.now();
     setNotice({ id, type, text });
-    setTimeout(() => {
+    if (type !== "error") setTimeout(() => {
       setNotice((current) => (current?.id === id ? null : current));
     }, 4000);
   };
@@ -121,19 +124,20 @@ export default function AdminDashboard({
   const save = () =>
     startSaving(async () => {
       try {
-        const result = await saveSiteData(data, translations);
+        const result = await saveSiteData(data, translations, revision);
         if (result?.error) throw new Error(result.error);
         setSavedData(data);
         setSavedTranslations(translations);
         setSavedAt(result.savedAt);
+        setRevision(result.revision);
         showNotice(
           "success",
           mode === "production"
             ? "Yadda saxlanıldı. Dəyişikliklər saytda görünür."
             : "Yadda saxlanıldı. Mock rejimi söndürüləndə saytda görünəcək.",
         );
-      } catch {
-        showNotice("error", "Yadda saxlanmadı. İnterneti yoxlayıb yenidən cəhd edin.");
+      } catch (error) {
+        showNotice("error", error.message || "Yadda saxlanmadı. İnterneti yoxlayıb yenidən cəhd edin.");
       }
     });
 
@@ -141,16 +145,18 @@ export default function AdminDashboard({
     startSwitchingMode(async () => {
       const next = mode === "mock" ? "production" : "mock";
       try {
-        const result = await setSiteMode(next);
+        const result = await setSiteMode(next, revision);
+        if (result?.error) throw new Error(result.error);
         setMode(result.mode);
+        setRevision(result.revision);
         showNotice(
           "success",
           result.mode === "mock"
             ? "Mock data rejimi açıldı: saytda nümunə məlumatlar göstərilir."
             : "Mock data rejimi söndürüldü: saytda yadda saxlanmış məlumatlar göstərilir.",
         );
-      } catch {
-        showNotice("error", "Rejim dəyişmədi. Yenidən cəhd edin.");
+      } catch (error) {
+        showNotice("error", error.message || "Rejim dəyişmədi. Yenidən cəhd edin.");
       }
     });
 
@@ -178,9 +184,10 @@ export default function AdminDashboard({
     if (!file) return;
     try {
       const parsed = JSON.parse(await file.text());
-      const merged = mergeKnownSections(initialData, parsed?.data ?? parsed);
+      const merged = mergeKnownSections(data, parsed?.data ?? parsed);
       if (!merged) throw new Error("Invalid data");
-      setData(merged);
+      validateContent(merged, parsed?.translations ?? {});
+      setData((current) => mergeKnownSections(current, parsed?.data ?? parsed));
       if (parsed?.translations?.ru || parsed?.translations?.en) {
         setTranslations((current) => ({
           ru: { ...current.ru, ...parsed.translations.ru },
@@ -445,7 +452,7 @@ export default function AdminDashboard({
                 <button
                   type="button"
                   onClick={() => setConfirmReset(true)}
-                  disabled={!dirty || saving}
+                  disabled={!dirty || saving || switchingMode}
                   className={buttonClass.secondary}
                 >
                   Dəyişiklikləri ləğv et
@@ -454,7 +461,7 @@ export default function AdminDashboard({
               <button
                 type="button"
                 onClick={save}
-                disabled={!dirty || saving}
+                disabled={!dirty || saving || switchingMode}
                 className={`${buttonClass.primary} max-md:order-first`}
               >
                 {saving ? "Saxlanılır…" : "Yadda saxla"}
@@ -493,7 +500,7 @@ export default function AdminDashboard({
               role="switch"
               aria-checked={mode === "mock"}
               onClick={toggleMode}
-              disabled={switchingMode}
+              disabled={switchingMode || saving}
               className="inline-flex shrink-0 cursor-pointer items-center gap-2.5 font-semibold disabled:cursor-wait disabled:opacity-60"
             >
               Mock data

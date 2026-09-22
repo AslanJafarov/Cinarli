@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import * as fieldTemplates from "../../data/mock";
 import {
   blankLike,
   fieldLabel,
@@ -69,8 +70,8 @@ function PrimitiveInput({ id, fieldKey, value, onChange }) {
   );
 }
 
-function PrimitiveListEditor({ idPrefix, fieldKey, items, onChange }) {
-  const template = typeof items[0] === "number" ? 0 : "";
+function PrimitiveListEditor({ idPrefix, fieldKey, items, template: itemTemplate, onChange }) {
+  const template = typeof (items[0] ?? itemTemplate) === "number" ? 0 : "";
   const update = (index, next) =>
     onChange(items.map((item, i) => (i === index ? next : item)));
 
@@ -120,7 +121,7 @@ function PrimitiveListEditor({ idPrefix, fieldKey, items, onChange }) {
   );
 }
 
-function ObjectListEditor({ idPrefix, items, onChange }) {
+function ObjectListEditor({ idPrefix, items, template, onChange }) {
   const [collapsed, setCollapsed] = useState(() => new Set());
 
   const toggle = (index) =>
@@ -201,6 +202,7 @@ function ObjectListEditor({ idPrefix, items, onChange }) {
                   <ObjectFields
                     idPrefix={`${idPrefix}-${index}`}
                     value={item}
+                    template={template}
                     onChange={(next) => update(index, next)}
                   />
                 </div>
@@ -212,7 +214,7 @@ function ObjectListEditor({ idPrefix, items, onChange }) {
 
       <button
         type="button"
-        onClick={() => onChange([...items, blankLike(items[0] ?? {})])}
+        onClick={() => onChange([...items, blankLike(items[0] ?? template ?? {})])}
         className={buttonClass.add}
       >
         <Icon name="plus" /> Element əlavə et
@@ -221,7 +223,7 @@ function ObjectListEditor({ idPrefix, items, onChange }) {
   );
 }
 
-export function ObjectFields({ idPrefix, value, onChange }) {
+export function ObjectFields({ idPrefix, value, template, onChange }) {
   const entries = Object.entries(value);
   const simple = entries.filter(([, fieldValue]) => !isComplex(fieldValue));
   const complex = entries.filter(([, fieldValue]) => isComplex(fieldValue));
@@ -264,6 +266,7 @@ export function ObjectFields({ idPrefix, value, onChange }) {
             idPrefix={`${idPrefix}-${key}`}
             fieldKey={key}
             value={fieldValue}
+            template={template?.[key]}
             onChange={(next) => set(key, next)}
           />
         </fieldset>
@@ -272,23 +275,25 @@ export function ObjectFields({ idPrefix, value, onChange }) {
   );
 }
 
-export function ValueEditor({ idPrefix, fieldKey, value, onChange }) {
+export function ValueEditor({ idPrefix, fieldKey, value, template = fieldTemplates[fieldKey], onChange }) {
   if (Array.isArray(value)) {
-    const isObjectList = value.length > 0 && value.every(isPlainObject);
+    const itemTemplate = template?.[0];
+    const isObjectList = value.length > 0 ? value.every(isPlainObject) : isPlainObject(itemTemplate);
     return isObjectList ? (
-      <ObjectListEditor idPrefix={idPrefix} items={value} onChange={onChange} />
+      <ObjectListEditor idPrefix={idPrefix} items={value} template={itemTemplate} onChange={onChange} />
     ) : (
       <PrimitiveListEditor
         idPrefix={idPrefix}
         fieldKey={fieldKey}
         items={value}
+        template={itemTemplate}
         onChange={onChange}
       />
     );
   }
 
   if (isPlainObject(value)) {
-    return <ObjectFields idPrefix={idPrefix} value={value} onChange={onChange} />;
+    return <ObjectFields idPrefix={idPrefix} value={value} template={template} onChange={onChange} />;
   }
 
   return (

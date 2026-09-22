@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useI18n } from "../i18n/client";
 import { formatLocalPhone } from "../lib/phone";
 import { useLeadForm } from "./useLeadForm";
@@ -10,18 +10,31 @@ export default function LeadBar({ apartmentId }) {
   const { locale, content } = useI18n();
   const t = content.ui.leadBar;
   const [open, setOpen] = useState(true);
-  const { digits, changeDigits, status, error, submit } = useLeadForm({
+  const { digits, changeDigits, status, setStatus, error, submit } = useLeadForm({
     source: "apartment",
     apartmentId,
     locale,
     messages: content.ui.leadForm,
   });
 
+  useEffect(() => {
+    const openForm = (event) => {
+      if (event.detail.target !== "apartment-callback") return;
+      setOpen(true);
+      setStatus("idle");
+    };
+    window.addEventListener("open-callback", openForm);
+    if (window.location.hash === "#apartment-callback") {
+      document.getElementById("lead-phone")?.focus();
+    }
+    return () => window.removeEventListener("open-callback", openForm);
+  }, [setStatus]);
+
   if (!open) return null;
 
   return (
     // Sticky on desktop; on mobile it sits above the pinned MobileActionBar instead.
-    <div className="z-40 flex flex-wrap items-center gap-x-[clamp(12px,2vw,40px)] gap-y-3 bg-[#19241f] px-page py-5 text-white md:sticky md:bottom-0 md:gap-y-2 md:py-[clamp(6px,0.5vw,10px)]">
+    <div id="apartment-callback" tabIndex={-1} className="z-40 flex flex-wrap items-center gap-x-[clamp(12px,2vw,40px)] gap-y-3 bg-[#19241f] px-page py-5 text-white md:sticky md:bottom-0 md:gap-y-2 md:py-[clamp(6px,0.5vw,10px)]">
       <p className="order-1 text-[clamp(14px,1.15vw,22px)] font-bold">
         {t.title}
       </p>

@@ -3,8 +3,9 @@
 import { useEffect, useState, useTransition } from "react";
 import { fetchLeads, markLead, removeLead } from "@/app/admin/actions";
 import { buttonClass, Icon, IconButton } from "./ui";
+import { csvCell } from "../../lib/csv";
 
-const SOURCES = { footer: "Footer forması", apartment: "Mənzil səhifəsi" };
+const SOURCES = { footer: "Footer forması", apartment: "Mənzil səhifəsi", appointment: "Görüş sorğusu", calculator: "Kalkulyator" };
 const LANGUAGES = { az: "AZ", ru: "RU", en: "EN" };
 
 const formatPhone = (phone) =>
@@ -32,7 +33,7 @@ function exportCsv(leads) {
     ]),
   ];
   const csv = rows
-    .map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(","))
+    .map((row) => row.map(csvCell).join(","))
     .join("\n");
   // The BOM makes Excel read the Azerbaijani letters correctly.
   const url = URL.createObjectURL(new Blob(["﻿", csv], { type: "text/csv;charset=utf-8" }));

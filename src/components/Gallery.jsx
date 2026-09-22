@@ -4,6 +4,7 @@ import EmptyNotice from "./EmptyNotice";
 import { localizeHref } from "../i18n/config";
 import { getI18n } from "../i18n/server";
 import { blurPlaceholder, photosWithImages } from "../lib/galleryPhotos";
+import { getSiteData } from "../lib/store";
 
 // Phones: the four smaller photos become a 2×2 grid of squares.
 const tileClass =
@@ -26,8 +27,11 @@ function GalleryImage({ image, sizes }) {
 export default async function Gallery() {
   const { locale, content } = await getI18n();
   const { gallery, ui } = content;
-  // The sample data picks its own five photos; saved data shows the first five gallery photos.
-  const tiles = photosWithImages(gallery.images?.length ? gallery.images : gallery.photos).slice(0, 5);
+  // Preserve the curated sample homepage; saved content follows the admin's photo order.
+  const homepagePhotos = getSiteData().mode === "mock"
+    ? gallery.images
+    : gallery.photos ?? gallery.images;
+  const tiles = photosWithImages(homepagePhotos).slice(0, 5);
   const photoCount = photosWithImages(gallery.photos).length;
   const [featured, ...rest] = tiles;
   const rows = [rest.slice(0, 2), rest.slice(2, 4)].filter((row) => row.length > 0);

@@ -1,5 +1,8 @@
 import Link from "next/link";
+import GalleryGrid from "./GalleryGrid";
+import { photosWithImages } from "../lib/galleryPhotos";
 import LeadBar from "./LeadBar";
+import CallbackLink from "./CallbackLink";
 import MobileActionBar from "./MobileActionBar";
 import PlanCard from "./PlanCard";
 import { localizeHref } from "../i18n/config";
@@ -98,21 +101,27 @@ export default async function ApartmentDetail({ apartment }) {
               {t.paymentTitle}
             </h2>
             <div className="mt-[clamp(14px,1.4vw,28px)] grid gap-[clamp(10px,1vw,20px)] sm:grid-cols-[344fr_468fr]">
-              <button
-                type="button"
-                className="h-[clamp(48px,3.9vw,76px)] cursor-pointer rounded-full bg-[#24503a] px-4 text-[clamp(12px,0.9vw,17px)] font-bold uppercase tracking-[0.03em] text-white"
+              <Link
+                href={localizeHref(locale, "/#odenis")}
+                className="flex items-center justify-center h-[clamp(48px,3.9vw,76px)] cursor-pointer rounded-full bg-[#24503a] px-4 text-[clamp(12px,0.9vw,17px)] font-bold uppercase tracking-[0.03em] text-white"
               >
                 {t.calculator}
-              </button>
-              <button
-                type="button"
-                className="h-[clamp(48px,3.9vw,76px)] cursor-pointer rounded-full bg-[#16241d] px-4 text-[clamp(12px,0.9vw,17px)] font-bold uppercase tracking-[0.03em] text-white"
+              </Link>
+              <CallbackLink
+                target="apartment-callback" source="apartment"
+                className="flex items-center justify-center h-[clamp(48px,3.9vw,76px)] cursor-pointer rounded-full bg-[#16241d] px-4 text-[clamp(12px,0.9vw,17px)] font-bold uppercase tracking-[0.03em] text-white"
               >
                 {t.talkToManager}
-              </button>
+              </CallbackLink>
             </div>
           </div>
         </div>
+
+        {apartment.photos?.length > 0 && (
+          <section className="mt-12" aria-label={ui.gallery.photos}>
+            <GalleryGrid photos={photosWithImages(apartment.photos)} categories={[]} labels={ui.gallery} />
+          </section>
+        )}
 
         {/* Links every apartment (reserved and sold too), so none is unreachable */}
         {apartments.length > 1 && (

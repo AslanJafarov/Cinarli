@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
+import ImageViewer from "./ImageViewer";
 import plan2Room8210 from "../assets/plans/2-otaq-82-10.jpg";
 import plan3Room11495 from "../assets/plans/3-otaq-114-95.jpg";
 import plan3Room11635 from "../assets/plans/3-otaq-116-35.jpg";
@@ -41,8 +43,11 @@ export default function PlanCard({ apartment, variant = "compact", className = "
   const styles = variants[variant];
   const areaText = (value) => translate(ui.common.area, { value });
   const plan = planSource(apartment);
+  const [viewing, setViewing] = useState(false);
+  const planAlt = translate(ui.planCard.planAlt, { count: apartment.rooms }, locale);
 
   return (
+    <>
     <div
       className={`@container relative flex w-full shrink-0 overflow-hidden bg-[#efeeeb] font-display text-[#141414] ${styles.card} ${className}`}
       style={{
@@ -88,14 +93,16 @@ export default function PlanCard({ apartment, variant = "compact", className = "
             plan ? "cursor-pointer transition-transform duration-300 ease-out hover:scale-160 motion-reduce:transition-none" : ""
           }`}>
           {plan ? (
+            <button type="button" aria-label={`${ui.gallery.open}: ${planAlt}`} onClick={() => setViewing(true)} className="block w-full cursor-zoom-in focus-visible:outline-2 focus-visible:outline-offset-2">
             <Image
               src={plan}
-              alt={translate(ui.planCard.planAlt, { count: apartment.rooms }, locale)}
+              alt={planAlt}
               sizes={styles.sizes}
               // The large plan is the main image on apartment pages, so start loading it right away.
               preload={variant === "large"}
               className="block h-auto w-full"
             />
+            </button>
           ) : (
             <div className="flex aspect-square flex-col items-center justify-center gap-[2cqw] bg-white px-[2cqw] text-center text-[#6c6b65]">
               <svg
@@ -116,5 +123,7 @@ export default function PlanCard({ apartment, variant = "compact", className = "
         </div>
       </div>
     </div>
+    {viewing && plan && <ImageViewer photo={{ image: plan, alt: planAlt }} labels={ui.gallery} onClose={() => setViewing(false)} />}
+    </>
   );
 }

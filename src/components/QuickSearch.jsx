@@ -45,7 +45,7 @@ export default function QuickSearch() {
               // The select is invisible and covers the whole row, so a tap anywhere opens it.
               <div
                 key={filter.field}
-                className="relative flex items-center justify-between gap-4 rounded-[10px] border-b border-[#16201b]/6 py-3 last:border-b-0 md:flex-1 md:flex-col md:items-start md:justify-center md:gap-[clamp(2px,0.3vw,6px)] md:rounded-none md:border-b-0 md:border-l md:px-[clamp(14px,1.4vw,28px)] md:py-[clamp(4px,0.4vw,8px)]"
+                className="relative focus-within:ring-2 focus-within:ring-[#24503a] focus-within:ring-offset-2 flex items-center justify-between gap-4 rounded-[10px] border-b border-[#16201b]/6 py-3 last:border-b-0 md:flex-1 md:flex-col md:items-start md:justify-center md:gap-[clamp(2px,0.3vw,6px)] md:rounded-none md:border-b-0 md:border-l md:px-[clamp(14px,1.4vw,28px)] md:py-[clamp(4px,0.4vw,8px)]"
               >
                 <label
                   htmlFor={`quick-search-${filter.field}`}

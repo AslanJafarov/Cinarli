@@ -1,0 +1,242 @@
+{
+  "local": [
+    {
+      "route": "/",
+      "status": 200,
+      "location": null,
+      "cache": "STALE",
+      "bytes": 185321,
+      "password": false,
+      "canonical": "https://cinarli.az",
+      "placeholderPhone": true
+    },
+    {
+      "route": "/menziller",
+      "status": 200,
+      "location": null,
+      "cache": "STALE",
+      "bytes": 84291,
+      "password": false,
+      "canonical": "https://cinarli.az/menziller",
+      "placeholderPhone": true
+    },
+    {
+      "route": "/menziller/A-04-12",
+      "status": 200,
+      "location": null,
+      "cache": "STALE",
+      "bytes": 88090,
+      "password": false,
+      "canonical": "https://cinarli.az/menziller/A-04-12",
+      "placeholderPhone": true
+    },
+    {
+      "route": "/qalereya",
+      "status": 200,
+      "location": null,
+      "cache": "STALE",
+      "bytes": 170369,
+      "password": false,
+      "canonical": "https://cinarli.az/qalereya",
+      "placeholderPhone": true
+    },
+    {
+      "route": "/elaqe",
+      "status": 200,
+      "location": null,
+      "cache": "STALE",
+      "bytes": 80581,
+      "password": false,
+      "canonical": "https://cinarli.az/elaqe",
+      "placeholderPhone": true
+    },
+    {
+      "route": "/xeberler",
+      "status": 200,
+      "location": null,
+      "cache": "STALE",
+      "bytes": 82175,
+      "password": false,
+      "canonical": "https://cinarli.az/xeberler",
+      "placeholderPhone": true
+    },
+    {
+      "route": "/xeberler/korpus-b-fasad-isleri",
+      "status": 200,
+      "location": null,
+      "cache": "STALE",
+      "bytes": 75443,
+      "password": false,
+      "canonical": "https://cinarli.az/xeberler/korpus-b-fasad-isleri",
+      "placeholderPhone": true
+    },
+    {
+      "route": "/en",
+      "status": 200,
+      "location": null,
+      "cache": "STALE",
+      "bytes": 182964,
+      "password": false,
+      "canonical": "https://cinarli.az/en",
+      "placeholderPhone": true
+    },
+    {
+      "route": "/ru",
+      "status": 200,
+      "location": null,
+      "cache": "STALE",
+      "bytes": 197452,
+      "password": false,
+      "canonical": "https://cinarli.az/ru",
+      "placeholderPhone": true
+    },
+    {
+      "route": "/en/menziller?rooms=3",
+      "status": 200,
+      "location": null,
+      "cache": "STALE",
+      "bytes": 82285,
+      "password": false,
+      "canonical": "https://cinarli.az/en/menziller",
+      "placeholderPhone": true
+    },
+    {
+      "route": "/login",
+      "status": 404,
+      "location": null,
+      "cache": null,
+      "bytes": 42909,
+      "password": false,
+      "placeholderPhone": true
+    },
+    {
+      "route": "/admin",
+      "status": 307,
+      "location": "/admin/login",
+      "cache": "HIT",
+      "bytes": 5056,
+      "password": false,
+      "placeholderPhone": false
+    },
+    {
+      "route": "/admin/login",
+      "status": 200,
+      "location": null,
+      "cache": "HIT",
+      "bytes": 7312,
+      "password": false,
+      "placeholderPhone": false
+    },
+    {
+      "route": "/robots.txt",
+      "status": 200,
+      "location": null,
+      "cache": "HIT",
+      "bytes": 122,
+      "password": false,
+      "placeholderPhone": false
+    },
+    {
+      "route": "/sitemap.xml",
+      "status": 200,
+      "location": null,
+      "cache": "STALE",
+      "bytes": 15727,
+      "password": false,
+      "placeholderPhone": false
+    },
+    {
+      "route": "/manifest.webmanifest",
+      "status": 200,
+      "location": null,
+      "cache": "HIT",
+      "bytes": 467,
+      "password": false,
+      "placeholderPhone": false
+    },
+    {
+      "route": "/media/invalid.webp",
+      "status": 404,
+      "location": null,
+      "cache": null,
+      "bytes": 9,
+      "password": false,
+      "placeholderPhone": false
+    }
+  ],
+  "live": [
+    {
+      "host": "chinarlipark.az",
+      "protocol": "http",
+      "status": 200,
+      "location": null,
+      "password": true
+    },
+    {
+      "host": "chinarlipark.az",
+      "protocol": "https-inspection",
+      "status": 200,
+      "authorized": false,
+      "authorizationError": "CERT_HAS_EXPIRED",
+      "validTo": "Dec 15 23:59:59 2025 GMT"
+    },
+    {
+      "host": "www.chinarlipark.az",
+      "protocol": "http",
+      "status": 200,
+      "location": null,
+      "password": true
+    },
+    {
+      "host": "www.chinarlipark.az",
+      "protocol": "https-inspection",
+      "status": 200,
+      "authorized": false,
+      "authorizationError": "CERT_HAS_EXPIRED",
+      "validTo": "Dec 15 23:59:59 2025 GMT"
+    }
+  ],
+  "invalidLead": {
+    "status": 400,
+    "body": "{\"error\":\"Sorğu oxunmadı.\"}"
+  },
+  "emptyLead": {
+    "status": 422,
+    "body": "{\"error\":\"Telefon nömrəsi düzgün deyil. Məsələn: 50 123 45 67.\"}"
+  },
+  "validLeads": [
+    {
+      "status": 201,
+      "body": "{\"ok\":true}"
+    },
+    {
+      "status": 201,
+      "body": "{\"ok\":true}"
+    },
+    {
+      "status": 201,
+      "body": "{\"ok\":true}"
+    },
+    {
+      "status": 201,
+      "body": "{\"ok\":true}"
+    },
+    {
+      "status": 201,
+      "body": "{\"ok\":true}"
+    },
+    {
+      "status": 201,
+      "body": "{\"ok\":true}"
+    },
+    {
+      "status": 201,
+      "body": "{\"ok\":true}"
+    },
+    {
+      "status": 201,
+      "body": "{\"ok\":true}"
+    }
+  ],
+  "uploadUnauthenticated": 401
+}
