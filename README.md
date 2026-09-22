@@ -42,7 +42,17 @@ The site is a cPanel Node.js app (Setup Node.js App): application root `reposito
 
 If the deploy task reports that `npm` or the activate script is not found, the Node environment path differs from `/home/chinrlfh/nodevenv/repositories/Cinarli/24/bin/activate`; copy the exact path shown at the top of the Setup Node.js App edit screen into `.cpanel.yml`.
 
-**Manual alternative:** on the Setup Node.js App edit screen click *Run NPM Install*, then *Run JS script* → `build`, then *Restart*. This is what `.cpanel.yml` automates.
+**Manual alternative** (cPanel → Terminal), the same steps `.cpanel.yml` automates:
+
+```sh
+cd ~/repositories/Cinarli && git pull && source ~/nodevenv/repositories/Cinarli/24/bin/activate \
+  && npm install --no-audit --no-fund \
+  && rm -rf .next-build && NEXT_DIST_DIR=.next-build NEXT_BUILD_CPUS=1 npm run build \
+  && rm -rf .next-previous && (test ! -d .next || mv .next .next-previous) && mv .next-build .next \
+  && mkdir -p tmp && touch tmp/restart.txt && echo DEPLOYED
+```
+
+Two host constraints shaped these steps: the account is capped at 2 GB, so the build must run with one worker (`NEXT_BUILD_CPUS=1`) or it is killed at "Collecting page data"; and the host's glibc is too old for Next's native SWC binary, so the build falls back to the slower WASM one (the warnings about `GLIBC_2.29` are expected).
 
 After each deployment check `/`, `/admin/login` (the password form must render), a login, and that saved content, photos and leads are still there. For code rollback, deploy the previous commit the same way; keep the same `DATA_DIR`. Never restore an old `leads.json` merely to roll back code.
 

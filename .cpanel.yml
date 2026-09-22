@@ -9,7 +9,8 @@ deployment:
     - source /home/chinrlfh/nodevenv/repositories/Cinarli/24/bin/activate
     # "npm install" updates node_modules in place; "npm ci" would delete it while the app is serving.
     - cd $APP && npm install --no-audit --no-fund
-    - cd $APP && rm -rf .next-build && NEXT_DIST_DIR=.next-build npm run build
+    # One build worker: the shared host caps memory at 2 GB and kills multi-worker builds.
+    - cd $APP && rm -rf .next-build && NEXT_DIST_DIR=.next-build NEXT_BUILD_CPUS=1 npm run build
     - cd $APP && rm -rf .next-previous
     - cd $APP && test ! -d .next || mv .next .next-previous
     - cd $APP && mv .next-build .next
