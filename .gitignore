@@ -45,3 +45,6 @@ next-env.d.ts
 
 # admin panel data and uploaded photos (lives on the server, not in git)
 /storage
+
+# Passenger restart trigger written by .cpanel.yml on each deploy
+/tmp/
