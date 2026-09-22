@@ -91,10 +91,14 @@ jobs:
             # tmp/restart.txt the way Passenger does. Use the CloudLinux selector, the same thing the
             # Restart button in cPanel calls; fall back to ending the old process so it respawns.
             mkdir -p tmp && touch tmp/restart.txt
-            if command -v cloudlinux-selector >/dev/null 2>&1; then
-              cloudlinux-selector restart --json --interface cloudlinux --user "$USER" --app-root repositories/Cinarli
+            # As the account user the selector takes no --user option ("Invalid parameter passed").
+            if command -v cloudlinux-selector >/dev/null 2>&1 \
+               && cloudlinux-selector restart --json --interface cloudlinux --app-root repositories/Cinarli \
+               | tee /dev/stderr | grep -q '"result": *"success"'; then
+              echo "restarted through cloudlinux-selector"
             else
-              pkill -u "$USER" -f "lsnode:$HOME/repositories/Cinarli" || true
+              echo "selector restart unavailable; ending the old lsnode process so it respawns"
+              pkill -f "lsnode:$HOME/repositories/Cinarli" || true
             fi
             echo "Deployed $1"
           REMOTE
