@@ -86,7 +86,16 @@ jobs:
             test ! -d .next || mv .next .next-previous
             mv .next-build .next
             rm -f cinarli-next.tar.gz
+            echo "== restart"
+            # The host runs the app under LiteSpeed's Node runner (lsnode), which does not watch
+            # tmp/restart.txt the way Passenger does. Use the CloudLinux selector, the same thing the
+            # Restart button in cPanel calls; fall back to ending the old process so it respawns.
             mkdir -p tmp && touch tmp/restart.txt
+            if command -v cloudlinux-selector >/dev/null 2>&1; then
+              cloudlinux-selector restart --json --interface cloudlinux --user "$USER" --app-root repositories/Cinarli
+            else
+              pkill -u "$USER" -f "lsnode:$HOME/repositories/Cinarli" || true
+            fi
             echo "Deployed $1"
           REMOTE
       - if: steps.key.outputs.present == 'true'
