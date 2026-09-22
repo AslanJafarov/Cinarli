@@ -10,6 +10,8 @@ deployment:
     # "npm install" updates node_modules in place; "npm ci" would delete it while the app is serving.
     - cd $APP && npm install --no-audit --no-fund
     - cd $APP && rm -rf .next-build && NEXT_DIST_DIR=.next-build npm run build
-    - cd $APP && rm -rf .next-previous && { test ! -d .next || mv .next .next-previous; } && mv .next-build .next
+    - cd $APP && rm -rf .next-previous
+    - cd $APP && test ! -d .next || mv .next .next-previous
+    - cd $APP && mv .next-build .next
     # Passenger restarts the app on the next request.
     - mkdir -p $APP/tmp && touch $APP/tmp/restart.txt
