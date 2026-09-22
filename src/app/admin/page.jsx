@@ -13,6 +13,17 @@ const page = async () => {
   await requireAdmin();
   const store = readStore();
 
+  // A damaged leads.json must not lock the admin out of everything else.
+  let initialLeads = [];
+  let leadsError = null;
+  try {
+    initialLeads = await readLeads();
+  } catch (error) {
+    console.error("[leads] could not be read", error);
+    leadsError =
+      "Müraciətlər faylı (leads.json) oxunmadı. Faylı yoxlayın: yeni müraciətlər düzələnə qədər saxlanılmır.";
+  }
+
   // The panel always edits the real (production) data; the mode decides what the site shows.
   return (
     <AdminApp
@@ -22,7 +33,8 @@ const page = async () => {
         ru: { ...translationSeed("ru"), ...store.translations.ru },
         en: { ...translationSeed("en"), ...store.translations.en },
       }}
-      initialLeads={await readLeads()}
+      initialLeads={initialLeads}
+      leadsError={leadsError}
       initialMode={store.mode}
       initialSavedAt={store.savedAt}
       initialRevision={store.revision}

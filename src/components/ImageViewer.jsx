@@ -46,10 +46,15 @@ export default function ImageViewer({ photo, index = 0, count = 1, labels, onClo
         <button type="button" className={button} aria-label={labels.zoom} aria-pressed={zoomed} onClick={() => setZoomed((value) => !value)}>{zoomed ? "−" : "+"}</button>
         <button type="button" className={button} aria-label={labels.close} onClick={onClose}>×</button>
       </div>
-      <div className="flex min-h-0 flex-1 items-center justify-center gap-2 px-page pb-6">
+      {/* Tapping the dark area around the picture closes the viewer, as the old overlay did. */}
+      <div
+        className="flex min-h-0 flex-1 items-center justify-center gap-2 px-page pb-6"
+        onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}
+      >
         {count > 1 && <button type="button" className={button} aria-label={labels.previous} onClick={() => step(-1)}>‹</button>}
         <figure
           className="flex h-full min-w-0 flex-1 flex-col items-center overflow-auto"
+          onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}
           onTouchStart={(event) => { touchStart.current = event.touches[0].clientX; }}
           onTouchEnd={(event) => {
             if (touchStart.current === null || zoomed) return;
@@ -59,7 +64,8 @@ export default function ImageViewer({ photo, index = 0, count = 1, labels, onClo
           }}
         >
           <Image src={photo.image} alt={photo.alt} placeholder={blurPlaceholder(photo.image)} sizes={zoomed ? "180vw" : "90vw"}
-            className={zoomed ? "h-auto w-[150%] max-w-none shrink-0 self-start" : "min-h-0 w-full flex-1 object-contain"} />
+            // Unzoomed, the element is only as big as the picture, so taps on the dark margins reach the figure.
+            className={zoomed ? "h-auto w-[150%] max-w-none shrink-0 self-start" : "h-auto max-h-full w-auto max-w-full min-h-0 object-contain"} />
           <figcaption className="mt-4 shrink-0 text-center text-sm text-white/80">{photo.alt}</figcaption>
         </figure>
         {count > 1 && <button type="button" className={button} aria-label={labels.next} onClick={() => step(1)}>›</button>}

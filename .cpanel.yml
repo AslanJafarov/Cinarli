@@ -3,9 +3,13 @@ deployment:
   tasks:
     # The Node.js app runs directly from this repository (cPanel > Setup Node.js App,
     # application root "repositories/Cinarli", startup file "server.js").
-    # Build in place with that app's Node environment, then ask Passenger to restart it.
+    # Build into a separate folder first; only a successful build replaces the served .next,
+    # so a failed install or build leaves the running site untouched.
     - export APP=/home/chinrlfh/repositories/Cinarli
     - source /home/chinrlfh/nodevenv/repositories/Cinarli/24/bin/activate
-    - cd $APP && npm ci
-    - cd $APP && npm run build
+    # "npm install" updates node_modules in place; "npm ci" would delete it while the app is serving.
+    - cd $APP && npm install --no-audit --no-fund
+    - cd $APP && rm -rf .next-build && NEXT_DIST_DIR=.next-build npm run build
+    - cd $APP && rm -rf .next-previous && { test ! -d .next || mv .next .next-previous; } && mv .next-build .next
+    # Passenger restarts the app on the next request.
     - mkdir -p $APP/tmp && touch $APP/tmp/restart.txt

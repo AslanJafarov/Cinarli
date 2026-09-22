@@ -56,6 +56,7 @@ export default function AdminDashboard({
   initialData,
   initialTranslations,
   initialLeads,
+  leadsError = null,
   initialMode,
   initialSavedAt,
   initialRevision,
@@ -195,8 +196,10 @@ export default function AdminDashboard({
         }));
       }
       showNotice("success", "JSON faylı yükləndi. Yadda saxlamağı unutmayın.");
-    } catch {
-      showNotice("error", "JSON faylı oxunmadı. Faylı yoxlayın.");
+    } catch (error) {
+      // Validation errors name the field; a parse error only gets the generic message.
+      const detail = error instanceof SyntaxError ? "" : error?.message;
+      showNotice("error", detail ? `JSON faylı qəbul edilmədi: ${detail}` : "JSON faylı oxunmadı. Faylı yoxlayın.");
     }
   };
 
@@ -566,6 +569,7 @@ export default function AdminDashboard({
           {activeSection.key === "leads" ? (
             <LeadsEditor
               leads={leads}
+              loadError={leadsError}
               onChange={setLeads}
               onError={(text) => showNotice("error", text)}
             />

@@ -19,9 +19,10 @@ test("production build supports runtime-only admin credentials and bounded lead 
   const port = listener.address().port;
   await new Promise((resolve) => listener.close(resolve));
   const secret = randomBytes(32).toString("hex");
-  const child = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "-H", "localhost", "-p", String(port)], {
+  // Boot the same entry point cPanel/Passenger runs, not `next start`.
+  const child = spawn(process.execPath, ["server.js"], {
     cwd: root, windowsHide: true, stdio: ["ignore", "pipe", "pipe"],
-    env: { ...process.env, NODE_ENV: "production", DATA_DIR: directory,
+    env: { ...process.env, PORT: String(port), DATA_DIR: directory,
       ADMIN_USERNAME: "test-admin", ADMIN_PASSWORD: randomBytes(24).toString("hex"),
       ADMIN_SESSION_SECRET: secret, TRUSTED_CLIENT_IP_HEADER: "x-test-client-ip",
       NEXT_TELEMETRY_DISABLED: "1" },

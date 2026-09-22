@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useI18n } from "../i18n/client";
 import { localeNames, locales, localizeHref, stripLocale } from "../i18n/config";
@@ -64,6 +64,7 @@ function subscribeLocation(callback) {
 function LanguageSwitcher({ locale, label, className = "", itemClassName = "", onNavigate }) {
   // Strip any locale prefix so the server and client render identical links.
   const basePath = stripLocale(usePathname());
+  const router = useRouter();
 
   const suffix = useSyncExternalStore(
     subscribeLocation,
@@ -76,15 +77,23 @@ function LanguageSwitcher({ locale, label, className = "", itemClassName = "", o
       {locales.map((code) => {
         const current = code === locale;
         return (
-          <a
+          <Link
             key={code}
             href={localizeHref(code, basePath) + suffix}
+            scroll={false}
             hrefLang={code}
             lang={code}
             title={localeNames[code]}
             aria-current={current ? "true" : undefined}
             onClick={(event) => {
-              event.currentTarget.href = localizeHref(code, basePath) + window.location.search + window.location.hash;
+              // Ctrl/Cmd/Shift/middle clicks keep the browser's open-in-new-tab behaviour.
+              if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+              // Filters may change the query without a popstate event, so read the URL at click time
+              // and navigate client-side, keeping the scroll position like the rest of the site.
+              event.preventDefault();
+              router.push(localizeHref(code, basePath) + window.location.search + window.location.hash, {
+                scroll: false,
+              });
               onNavigate?.();
             }}
             className={`uppercase transition-opacity duration-300 ${itemClassName} ${
@@ -94,7 +103,7 @@ function LanguageSwitcher({ locale, label, className = "", itemClassName = "", o
             }`}
           >
             {code}
-          </a>
+          </Link>
         );
       })}
     </nav>
@@ -141,11 +150,18 @@ export default function Navbar({ variant = "transparent", activePage }) {
     };
     window.addEventListener("keydown", onKeyDown);
 
+    // The dialog is display:none from the lg breakpoint up (lg:hidden). If the viewport grows past
+    // it while open (tablet rotation), close it so the page doesn't stay modal with nothing visible.
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const onBreakpoint = (event) => { if (event.matches) setMenuOpen(false); };
+    desktop.addEventListener("change", onBreakpoint);
+
     return () => {
       cancelAnimationFrame(focusFrame);
       dialog.close();
       root.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
+      desktop.removeEventListener("change", onBreakpoint);
     };
   }, [menuOpen]);
 

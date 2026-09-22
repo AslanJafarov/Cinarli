@@ -13,8 +13,10 @@
 # testing
 /coverage
 
-# next.js
+# next.js (deployment builds into .next-build and keeps the last build as .next-previous)
 /.next/
+/.next-build/
+/.next-previous/
 /out/
 
 # production

@@ -22,7 +22,9 @@ function exportCsv(leads) {
     ["Tarix", "Telefon", "Status", "Forma", "Mənzil", "Səhifə", "Dil", "Kampaniya", "İlk səhifə"],
     ...leads.map((lead) => [
       formatDate(lead.createdAt),
-      lead.phone,
+      // "994 50 123 45 67": the spaces keep spreadsheets from turning it into a number,
+      // and without the leading "+" the formula guard in csvCell leaves it untouched.
+      formatPhone(lead.phone).replace(/^\+/, ""),
       lead.status === "done" ? "Baxıldı" : "Yeni",
       SOURCES[lead.source] ?? lead.source,
       lead.apartmentId ?? "",
@@ -45,7 +47,7 @@ function exportCsv(leads) {
 }
 
 /** Leads from the website forms. Status changes and deletions are saved right away. */
-export default function LeadsEditor({ leads, onChange, onError }) {
+export default function LeadsEditor({ leads, loadError = null, onChange, onError }) {
   const [filter, setFilter] = useState("new");
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [refreshing, startRefresh] = useTransition();
@@ -84,6 +86,11 @@ export default function LeadsEditor({ leads, onChange, onError }) {
 
   return (
     <section className="rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(22,32,27,0.06)] sm:p-6">
+      {loadError && (
+        <p role="alert" className="mb-4 rounded-xl bg-[#9b2f22]/10 px-4 py-3 text-sm text-[#9b2f22]">
+          {loadError}
+        </p>
+      )}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div role="group" aria-label="Filtr" className="flex rounded-full bg-[#16201b]/6 p-1">
           {[

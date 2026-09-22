@@ -123,8 +123,8 @@ export function getSiteData() {
 }
 
 export async function saveData(data, translations = {}, expectedRevision) {
+  // transaction() validates the proposed content once, under the write lock.
   const proposed = productionData(data);
-  validateContent(proposed, translations);
   return transaction(expectedRevision, (store) => ({
     ...store,
     data: proposed,

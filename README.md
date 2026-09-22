@@ -38,7 +38,7 @@ See [.env.example](.env.example). Never commit real credentials or server data.
 
 The site is a cPanel Node.js app (Setup Node.js App): application root `repositories/Cinarli`, startup file `server.js`, Node 24, production mode. `DATA_DIR` points at `/home/chinrlfh/cinarli-data`, outside the app folder, so deployments never touch saved content, leads or uploads. The admin credentials are environment variables on that screen.
 
-**Deploying:** push to `main`, then in cPanel → Git Version Control → Manage → Pull or Deploy → *Deploy HEAD Commit*. `.cpanel.yml` builds in place (`npm ci`, `npm run build`) using the app's own Node environment and touches `tmp/restart.txt`, which makes Passenger restart the app on the next request. A failed install or build leaves the previous build and all data untouched; the app keeps serving the old build.
+**Deploying:** push to `main`, then in cPanel → Git Version Control → Manage → Pull or Deploy → *Deploy HEAD Commit*. `.cpanel.yml` uses the app's own Node environment to update `node_modules` in place, build into `.next-build`, and only after a successful build move it to `.next` (the last good build is kept as `.next-previous`). It then touches `tmp/restart.txt`, which makes Passenger restart the app on the next request. A failed install or build stops before the swap, so the site keeps serving the previous build and all data stays untouched. To roll back the build only, swap `.next` and `.next-previous` back and touch `tmp/restart.txt`.
 
 If the deploy task reports that `npm` or the activate script is not found, the Node environment path differs from `/home/chinrlfh/nodevenv/repositories/Cinarli/24/bin/activate`; copy the exact path shown at the top of the Setup Node.js App edit screen into `.cpanel.yml`.
 
