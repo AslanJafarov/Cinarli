@@ -106,6 +106,10 @@ test("production build supports runtime-only admin credentials and bounded lead 
   const adminView = await fetch(origin + "/", { headers: { cookie } });
   assert.equal(adminView.status, 200, "an admin session still sees the real site");
   assert.doesNotMatch(await adminView.text(), constructionPage);
+  assert.match(adminView.headers.get("set-cookie") ?? "", /cinarli_site_closed=1/,
+    "the admin's browser is told the site is closed");
+  assert.equal((await fetch(origin + "/?view=visitor", { headers: { cookie } })).status, 503,
+    "?view=visitor shows an admin the visitor view");
   assert.equal((await fetch(origin + "/admin/login")).status, 200);
   assert.equal((await fetch(origin + "/maintenance/en")).status, 200);
   assert.equal((await post(JSON.stringify({ phone: "+9945012345678" }), "192.0.2.7")).status, 422,
@@ -114,6 +118,9 @@ test("production build supports runtime-only admin credentials and bounded lead 
   const reopened = await fetch(origin + "/");
   assert.equal(reopened.status, 200);
   assert.doesNotMatch(await reopened.text(), constructionPage);
+  const cleared = await fetch(origin + "/", { headers: { cookie: `${cookie}; cinarli_site_closed=1` } });
+  assert.match(cleared.headers.get("set-cookie") ?? "", /cinarli_site_closed=;.*(Max-Age=0|Expires=Thu, 01 Jan 1970)/i,
+    "the closed-site note is removed once the site is open");
   const direct = await fetch(origin + "/maintenance/az", { redirect: "manual" });
   assert.ok([307, 308].includes(direct.status), "construction page redirects home while open");
   assert.equal((await fetch(origin + "/maintenance/az", { headers: { cookie } })).status, 200,

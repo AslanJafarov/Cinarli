@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import SiteClosedBanner from "@/components/SiteClosedBanner";
 import { hasLocale, locales } from "@/i18n/config";
 import { I18nProvider } from "@/i18n/client";
 import { getContent } from "@/i18n/content";
@@ -48,6 +49,7 @@ export default async function RootLayout({ children, params }) {
         <I18nProvider locale={lang} content={getContent(lang)}>
           {children}
         </I18nProvider>
+        <SiteClosedBanner />
       </body>
     </html>
   );
