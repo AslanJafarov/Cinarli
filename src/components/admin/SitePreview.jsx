@@ -12,6 +12,35 @@ const FRAME_CSS = `
   *, *::before, *::after { animation: none !important; transition: none !important; }
 `;
 
+// Hides pinned bars and shifts the page so the section sits at the top of the frame.
+// Runs again whenever the section changes size; returns the cleanup.
+function placeSection(doc, win, target, setArea) {
+  if (!doc.getElementById("admin-preview-style")) {
+    const style = doc.createElement("style");
+    style.id = "admin-preview-style";
+    style.textContent = FRAME_CSS;
+    doc.head.append(style);
+  }
+  for (const element of doc.body.querySelectorAll("*")) {
+    const { position } = win.getComputedStyle(element);
+    if ((position === "fixed" || position === "sticky") && !target.contains(element)) {
+      element.style.setProperty("display", "none", "important");
+    }
+  }
+
+  const place = () => {
+    doc.body.style.transform = "";
+    const rect = target.getBoundingClientRect();
+    const top = rect.top + win.scrollY;
+    doc.body.style.transform = `translateY(${-top}px)`;
+    setArea({ height: rect.height });
+  };
+  place();
+  const observer = new win.ResizeObserver(place);
+  observer.observe(target);
+  return () => observer.disconnect();
+}
+
 /**
  * The real website in a small window, cropped to the section being edited
  * (the element with data-admin-preview="<section key>"). Shows the published site;
@@ -38,43 +67,47 @@ function LivePreview({ path, sectionKey, viewport, version }) {
 
   const scale = boxWidth / viewport;
 
-  // Finds the section in the loaded page, hides pinned bars and shifts the page so the
-  // section sits at the top of the frame. Runs again whenever the section changes size.
+  // Finds the section in the loaded page and places it (see placeSection).
   useEffect(() => {
     const frame = frameRef.current;
     if (!frame || !loaded) return undefined;
     const doc = frame.contentDocument;
     const win = frame.contentWindow;
-    const target = doc?.querySelector(`[data-admin-preview~="${sectionKey}"]`);
-    if (!target) {
-      setMissingKey(`${frameKey}-${sectionKey}`);
-      return undefined;
-    }
+    if (!doc?.body) return undefined;
+    const find = () => doc.querySelector(`[data-admin-preview~="${sectionKey}"]`);
 
-    if (!doc.getElementById("admin-preview-style")) {
-      const style = doc.createElement("style");
-      style.id = "admin-preview-style";
-      style.textContent = FRAME_CSS;
-      doc.head.append(style);
-    }
-    for (const element of doc.body.querySelectorAll("*")) {
-      const { position } = win.getComputedStyle(element);
-      if ((position === "fixed" || position === "sticky") && !target.contains(element)) {
-        element.style.setProperty("display", "none", "important");
-      }
-    }
-
-    const place = () => {
-      doc.body.style.transform = "";
-      const rect = target.getBoundingClientRect();
-      const top = rect.top + win.scrollY;
-      doc.body.style.transform = `translateY(${-top}px)`;
-      setArea({ height: rect.height });
+    let stopPlacing;
+    let waiting;
+    let giveUp;
+    const start = (target) => {
+      waiting?.disconnect();
+      clearTimeout(giveUp);
+      stopPlacing = placeSection(doc, win, target, setArea);
     };
-    place();
-    const observer = new win.ResizeObserver(place);
-    observer.observe(target);
-    return () => observer.disconnect();
+
+    const target = find();
+    if (target) {
+      start(target);
+    } else {
+      // Don't keep showing the previous section's crop meanwhile.
+      setArea(null);
+      // Parts rendered in the browser (after hydration) can appear a moment after load.
+      waiting = new win.MutationObserver(() => {
+        const found = find();
+        if (found) start(found);
+      });
+      waiting.observe(doc.body, { childList: true, subtree: true });
+      giveUp = setTimeout(() => {
+        waiting.disconnect();
+        setMissingKey(`${frameKey}-${sectionKey}`);
+      }, 3000);
+    }
+
+    return () => {
+      waiting?.disconnect();
+      clearTimeout(giveUp);
+      stopPlacing?.();
+    };
   }, [loaded, frameKey, sectionKey]);
 
   const fullHeight = area ? area.height * scale : 0;
@@ -91,6 +124,8 @@ function LivePreview({ path, sectionKey, viewport, version }) {
           key={frameKey}
           ref={frameRef}
           src={path}
+          // Tells the page it's the admin preview (ApartmentPicker shows every part then).
+          name="admin-preview"
           title="Saytın önizləməsi"
           aria-hidden="true"
           tabIndex={-1}

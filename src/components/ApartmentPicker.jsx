@@ -116,7 +116,32 @@ export default function ApartmentPicker() {
       </button>
     );
 
-  if (apartments.length === 0) {
+  // Inside the admin panel's preview (SitePreview.jsx) every part of the page is shown, even
+  // with no apartments published, so each section's texts can still be checked there.
+  const [adminPreview, setAdminPreview] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setAdminPreview(window.name === "admin-preview");
+  }, []);
+
+  const statusLegend = (
+    <ul className="mt-[clamp(16px,1.9vw,36px)] space-y-[clamp(10px,1.2vw,22px)]">
+      {Object.entries(apartmentStatuses).map(([status, label]) => (
+        <li
+          key={status}
+          className="flex items-center gap-[clamp(8px,0.7vw,14px)] text-[clamp(13px,1.02vw,20px)]"
+        >
+          <span
+            aria-hidden="true"
+            className={`h-[clamp(18px,1.6vw,32px)] w-[clamp(24px,2.1vw,42px)] rounded-[clamp(5px,0.45vw,9px)] ${statusStyles[status].swatch}`}
+          />
+          {label}
+        </li>
+      ))}
+    </ul>
+  );
+
+  if (apartments.length === 0 && !adminPreview) {
     const { phoneHref } = content.contactPage.office;
     return (
       <>
@@ -299,20 +324,7 @@ export default function ApartmentPicker() {
                 })}
               </h2>
 
-              <ul className="mt-[clamp(16px,1.9vw,36px)] space-y-[clamp(10px,1.2vw,22px)]">
-                {Object.entries(apartmentStatuses).map(([status, label]) => (
-                  <li
-                    key={status}
-                    className="flex items-center gap-[clamp(8px,0.7vw,14px)] text-[clamp(13px,1.02vw,20px)]"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`h-[clamp(18px,1.6vw,32px)] w-[clamp(24px,2.1vw,42px)] rounded-[clamp(5px,0.45vw,9px)] ${statusStyles[status].swatch}`}
-                    />
-                    {label}
-                  </li>
-                ))}
-              </ul>
+              {statusLegend}
 
               <div className="mt-[clamp(18px,2.1vw,40px)] grid max-w-[clamp(220px,16.3vw,320px)] grid-cols-2 gap-x-[clamp(10px,1.2vw,22px)] gap-y-[clamp(12px,1.5vw,28px)]">
                 {filteredApartments.map((apartment) => {
@@ -387,6 +399,14 @@ export default function ApartmentPicker() {
           </aside>
         </div>
         </>
+      ) : apartments.length === 0 ? (
+        // Admin preview with no apartments published: the status names still show.
+        <section data-admin-preview="apartmentStatuses" className="mt-[clamp(24px,2.9vw,56px)] rounded-[clamp(18px,2vw,40px)] bg-white p-[clamp(16px,2.45vw,48px)]">
+          <h2 className="text-[clamp(17px,1.57vw,30px)] font-bold leading-tight">
+            {ui.empty.noApartmentsTitle}
+          </h2>
+          {statusLegend}
+        </section>
       ) : (
         <div className="mt-[clamp(24px,2.9vw,56px)] flex animate-rise-in flex-col items-center rounded-[clamp(18px,2vw,40px)] [animation-delay:420ms] motion-reduce:animate-none bg-white px-6 py-[clamp(48px,6vw,120px)] text-center">
           <p className="text-[clamp(17px,1.57vw,30px)] font-bold">

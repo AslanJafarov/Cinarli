@@ -10,9 +10,11 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-const page = async () => {
+const page = async ({ searchParams }) => {
   await requireAdmin();
   const store = readStore();
+  // The section that was open, so a refresh stays on it (AdminDashboard keeps it in the URL).
+  const { section } = await searchParams;
 
   // A damaged leads.json must not lock the admin out of everything else.
   let initialLeads = [];
@@ -40,6 +42,7 @@ const page = async () => {
       initialMaintenance={isMaintenanceOn()}
       initialSavedAt={store.savedAt}
       initialRevision={store.revision}
+      initialSection={typeof section === "string" ? section : undefined}
     />
   );
 };

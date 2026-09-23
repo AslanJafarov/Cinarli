@@ -61,6 +61,7 @@ export default function AdminDashboard({
   initialMaintenance = false,
   initialSavedAt,
   initialRevision,
+  initialSection,
 }) {
   const [data, setData] = useState(initialData);
   const [maintenance, setMaintenance] = useState(initialMaintenance);
@@ -74,7 +75,7 @@ export default function AdminDashboard({
   const [revision, setRevision] = useState(initialRevision);
   const [saving, startSaving] = useTransition();
   const [switchingMode, startSwitchingMode] = useTransition();
-  const [activeKey, setActiveKey] = useState("leads");
+  const [activeKey, setActiveKey] = useState(initialSection ?? "leads");
   const [confirmReset, setConfirmReset] = useState(false);
   const [notice, setNotice] = useState(null);
   const importInputRef = useRef(null);
@@ -120,6 +121,8 @@ export default function AdminDashboard({
 
   const selectSection = (key) => {
     setActiveKey(key);
+    // Kept in the URL so a refresh reopens the same section.
+    window.history.replaceState(null, "", key === "leads" ? "/admin" : `/admin?section=${key}`);
     setOpenMenu(null);
     setConfirmReset(false);
     window.scrollTo({ top: 0 });
@@ -639,7 +642,8 @@ export default function AdminDashboard({
               section={activeSection}
               data={data}
               mode={mode}
-              version={savedAt ?? "initial"}
+              // Switching mock data on or off changes the page too, not only saving.
+              version={`${mode}-${savedAt ?? "initial"}`}
             />
           </section>
 
