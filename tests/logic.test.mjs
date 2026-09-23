@@ -7,6 +7,7 @@ import { withPublicContacts } from "../src/lib/publicContacts.js";
 import { validateContent } from "../src/lib/contentValidation.js";
 import { createLeadLimiter, leadClient } from "../src/lib/leadLimit.js";
 import { readJsonBody, BodyTooLarge } from "../src/lib/requestBody.js";
+import { createSession, verifySession } from "../src/lib/session.js";
 import * as defaults from "../src/data/mock.js";
 
 test("CSV formula-like and control-prefixed cells are text; quoting survives", () => {
@@ -129,4 +130,26 @@ test("body cap counts streamed bytes with missing/forged length", async () => {
   await assert.rejects(readJsonBody(request(["x".repeat(17)], { "content-length": "1" }), 16), BodyTooLarge);
   await assert.rejects(readJsonBody(request(["x".repeat(17)]), 16), BodyTooLarge);
   await assert.rejects(readJsonBody(request(["{"])), SyntaxError);
+});
+
+test("session cookies verify only when signed with the current secret and unexpired", () => {
+  const saved = { ...process.env };
+  try {
+    Object.assign(process.env, { ADMIN_USERNAME: "a", ADMIN_PASSWORD: "b", ADMIN_SESSION_SECRET: "secret-one" });
+    const { value, expires } = createSession(1_000_000);
+    assert.ok(expires instanceof Date);
+    assert.equal(verifySession(value, 1_000_001), true);
+    assert.equal(verifySession(value, expires.getTime() + 1), false, "expired");
+    assert.equal(verifySession(value + "x", 1_000_001), false, "tampered signature");
+    assert.equal(verifySession(value.replace(/^\d+/, (n) => String(Number(n) + 1)), 1_000_001), false, "tampered expiry");
+    for (const bad of [undefined, "", "garbage", "abc.def", "123"]) assert.equal(verifySession(bad, 1_000_001), false);
+    process.env.ADMIN_SESSION_SECRET = "secret-two";
+    assert.equal(verifySession(value, 1_000_001), false, "rotating the secret revokes sessions");
+    delete process.env.ADMIN_SESSION_SECRET;
+    assert.equal(verifySession(value, 1_000_001), false, "unconfigured auth never verifies");
+  } finally {
+    for (const key of ["ADMIN_USERNAME", "ADMIN_PASSWORD", "ADMIN_SESSION_SECRET"]) {
+      if (saved[key] === undefined) delete process.env[key]; else process.env[key] = saved[key];
+    }
+  }
 });

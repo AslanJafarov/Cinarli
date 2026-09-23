@@ -2,6 +2,7 @@ import AdminApp from "@/components/admin/AdminApp";
 import { requireAdmin } from "@/lib/auth";
 import { translationSeed } from "@/i18n/content";
 import { readLeads } from "@/lib/leads";
+import { isMaintenanceOn } from "@/lib/maintenance";
 import { productionData, readStore } from "@/lib/store";
 
 export const metadata = {
@@ -36,6 +37,7 @@ const page = async () => {
       initialLeads={initialLeads}
       leadsError={leadsError}
       initialMode={store.mode}
+      initialMaintenance={isMaintenanceOn()}
       initialSavedAt={store.savedAt}
       initialRevision={store.revision}
     />

@@ -201,6 +201,15 @@ export const TEXT_GROUPS = [
         preview: { path: "/" },
       },
       {
+        key: "maintenance",
+        title: "“Sayt hazırlanır” səhifəsi",
+        description:
+          "Tikinti rejimi açıq olanda ziyarətçilərin gördüyü səhifənin başlığı və mətni. Zəng forması, telefon və müəllif hüququ sətri Footer və Əlaqə bölmələrindən götürülür.",
+        where: "Tikinti rejimi açıq olanda bütün sayt əvəzinə",
+        href: "/maintenance/az",
+        preview: { path: "/maintenance/az" },
+      },
+      {
         key: "seo",
         title: "Google və paylaşım",
         description: "Axtarış nəticələrində və link paylaşanda görünən başlıq və təsvirlər.",

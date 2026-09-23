@@ -537,6 +537,10 @@ const en = {
       "body": "Concrete and waterproofing works are nearly finished in the two-level car park beneath the complex. Ventilation, lighting and security systems will be installed next.\n\nThanks to the car park, the courtyard stays completely car-free — a safer and calmer environment for children and families."
     }
   ],
+  maintenance: {
+    title: "Website under construction",
+    text: "The Çınarlı Park website is being updated and will be back shortly. To learn about the apartments, leave your number and our sales team will call you.",
+  },
 };
 
 export default en;

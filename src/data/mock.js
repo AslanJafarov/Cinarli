@@ -550,3 +550,10 @@ export const projectOverview = {
     },
   ],
 };
+
+// "Under construction" page (src/app/maintenance), shown while the admin panel's
+// "Tikinti rejimi" switch is on. The callback form, phone and copyright come from the sections above.
+export const maintenance = {
+  title: "Sayt hazırlanır",
+  text: "Çınarlı Park saytı yenilənir və tezliklə yenidən sizinlə olacaq. Mənzillər haqqında məlumat almaq üçün nömrənizi qoyun, satış komandamız sizinlə əlaqə saxlayacaq.",
+};

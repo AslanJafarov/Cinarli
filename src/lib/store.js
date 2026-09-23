@@ -6,12 +6,9 @@ import * as mockData from "../data/mock.js";
 import { cleanDictionary } from "./translatable.js";
 import { validateContent } from "./contentValidation.js";
 
-// Server-only: everything the admin panel saves lives in one folder outside the app code,
-// so deploys don't overwrite it. Set DATA_DIR on the server to keep it somewhere else.
-// The ignore comment keeps the build from bundling the whole project because of this runtime path.
-export const dataDir = path.resolve(
-  /*turbopackIgnore: true*/ process.env.DATA_DIR || path.join(process.cwd(), "storage"),
-);
+// Server-only. The data folder is resolved in ./dataDir.js (shared with the request proxy).
+import { dataDir } from "./dataDir.js";
+export { dataDir };
 const storeFile = path.join(dataDir, "site.json");
 export const uploadsDir = path.join(dataDir, "uploads");
 

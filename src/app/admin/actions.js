@@ -6,11 +6,13 @@ import { redirect } from "next/navigation";
 import { checkCredentials, endSession, requireAdmin, startSession } from "@/lib/auth";
 import { deleteLead, readLeads, setLeadStatus } from "@/lib/leads";
 import { clearFailures, clientIp, lockRemaining, recordFailure } from "@/lib/loginLimit";
+import { setMaintenance } from "@/lib/maintenance";
 import { saveData, saveMode } from "@/lib/store";
 
 // Every public page reads the saved data, so all of them are rebuilt.
 function refreshSite() {
   revalidatePath("/[lang]", "layout");
+  revalidatePath("/maintenance/[lang]", "layout");
   revalidatePath("/sitemap.xml");
 }
 
@@ -66,6 +68,18 @@ export async function setSiteMode(mode, expectedRevision) {
     return { mode: store.mode, revision: store.revision };
   } catch (error) {
     return { error: error.code ? "Rejim dəyişmədi. Saxlama qovluğunu və faylları yoxlayın." : error.message };
+  }
+}
+
+// "Tikinti rejimi": closes the public site behind the construction page (see src/proxy.js).
+// Takes effect on the next request; no rebuild and no content revision involved.
+export async function setMaintenanceMode(enabled) {
+  await requireAdmin();
+  try {
+    return { maintenance: await setMaintenance(Boolean(enabled)) };
+  } catch (error) {
+    console.error("[maintenance] could not be saved", error);
+    return { error: "Tikinti rejimi dəyişmədi. Saxlama qovluğunu yoxlayın." };
   }
 }
 

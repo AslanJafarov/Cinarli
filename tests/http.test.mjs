@@ -84,4 +84,38 @@ test("production build supports runtime-only admin credentials and bounded lead 
   assert.ok(Number(burst.at(-1).headers.get("retry-after")) > 0);
   // Missing trusted identity uses a site-wide abuse ceiling, not the five-attempt client limit.
   for (let i = 0; i < 6; i++) assert.equal((await post(lead)).status, 201);
+
+  // Under construction: written by another process here; the server picks it up by mtime.
+  const flagFile = path.join(directory, "maintenance.json");
+  const setFlag = async (enabled) => {
+    await delay(20); // keep the file's mtime distinct from the previous write
+    await fs.writeFile(flagFile, JSON.stringify({ enabled }));
+  };
+  const constructionPage = /data-maintenance-page/;
+  await setFlag(true);
+  const closed = await fetch(origin + "/");
+  assert.equal(closed.status, 503, "visitors get 503 while closed");
+  assert.equal(closed.headers.get("retry-after"), "3600");
+  const closedHtml = await closed.text();
+  assert.match(closedHtml, constructionPage);
+  assert.match(closedHtml, /<html lang="az"/);
+  assert.match(closedHtml, /noindex/);
+  const closedRu = await fetch(origin + "/ru/menziller");
+  assert.equal(closedRu.status, 503);
+  assert.match(await closedRu.text(), /<html lang="ru"/);
+  const adminView = await fetch(origin + "/", { headers: { cookie } });
+  assert.equal(adminView.status, 200, "an admin session still sees the real site");
+  assert.doesNotMatch(await adminView.text(), constructionPage);
+  assert.equal((await fetch(origin + "/admin/login")).status, 200);
+  assert.equal((await fetch(origin + "/maintenance/en")).status, 200);
+  assert.equal((await post(JSON.stringify({ phone: "+9945012345678" }), "192.0.2.7")).status, 422,
+    "the callback form keeps working while closed");
+  await setFlag(false);
+  const reopened = await fetch(origin + "/");
+  assert.equal(reopened.status, 200);
+  assert.doesNotMatch(await reopened.text(), constructionPage);
+  const direct = await fetch(origin + "/maintenance/az", { redirect: "manual" });
+  assert.ok([307, 308].includes(direct.status), "construction page redirects home while open");
+  assert.equal((await fetch(origin + "/maintenance/az", { headers: { cookie } })).status, 200,
+    "an admin can preview the construction page while open");
 });

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { logout, saveSiteData, setSiteMode } from "@/app/admin/actions";
+import { logout, saveSiteData, setMaintenanceMode, setSiteMode } from "@/app/admin/actions";
 import ApartmentsEditor from "./ApartmentsEditor";
 import { MAIN_SECTIONS, TEXT_GROUPS } from "./adminConfig";
 import { ValueEditor } from "./FieldEditor";
@@ -58,10 +58,13 @@ export default function AdminDashboard({
   initialLeads,
   leadsError = null,
   initialMode,
+  initialMaintenance = false,
   initialSavedAt,
   initialRevision,
 }) {
   const [data, setData] = useState(initialData);
+  const [maintenance, setMaintenance] = useState(initialMaintenance);
+  const [switchingMaintenance, startSwitchingMaintenance] = useTransition();
   const [savedData, setSavedData] = useState(initialData);
   const [translations, setTranslations] = useState(initialTranslations);
   const [savedTranslations, setSavedTranslations] = useState(initialTranslations);
@@ -158,6 +161,24 @@ export default function AdminDashboard({
         );
       } catch (error) {
         showNotice("error", error.message || "Rejim dəyişmədi. Yenidən cəhd edin.");
+      }
+    });
+
+  // "Tikinti rejimi": visitors see the construction page; this browser keeps seeing the site.
+  const toggleMaintenance = () =>
+    startSwitchingMaintenance(async () => {
+      try {
+        const result = await setMaintenanceMode(!maintenance);
+        if (result?.error) throw new Error(result.error);
+        setMaintenance(result.maintenance);
+        showNotice(
+          "success",
+          result.maintenance
+            ? "Tikinti rejimi açıldı: ziyarətçilər “Sayt hazırlanır” səhifəsini görür. Siz daxil olduğunuz üçün saytı görməyə davam edirsiniz."
+            : "Tikinti rejimi söndürüldü: sayt ziyarətçilər üçün açıqdır.",
+        );
+      } catch (error) {
+        showNotice("error", error.message || "Tikinti rejimi dəyişmədi. Yenidən cəhd edin.");
       }
     });
 
@@ -389,7 +410,15 @@ export default function AdminDashboard({
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#9a9991] max-md:hidden">
                 {inTexts ? `${TEXTS_MENU} · ${activeSection.group}` : "Əsas"}
               </p>
-              <h1 className="truncate text-2xl font-bold max-md:text-xl">{activeSection.title}</h1>
+              <h1 className="flex items-center gap-3 truncate text-2xl font-bold max-md:text-xl">
+                {activeSection.title}
+                {maintenance && (
+                  <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#9b2f22] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-white">
+                    <span aria-hidden="true" className="size-1.5 rounded-full bg-white" />
+                    Sayt bağlıdır
+                  </span>
+                )}
+              </h1>
               {/* Mobile: status sits under the title; the action row scrolls sideways */}
               <p
                 className={`mt-0.5 flex items-center gap-1.5 truncate text-xs md:hidden ${
@@ -474,6 +503,54 @@ export default function AdminDashboard({
         </header>
 
         <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-6 lg:px-10 lg:py-8">
+          {/* Under construction */}
+          <div
+            className={`mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-2xl border px-4 py-3 text-sm ${
+              maintenance
+                ? "border-[#9b2f22]/30 bg-[#fbe9e6] text-[#6d2119]"
+                : "border-[#16201b]/10 bg-white text-[#4d4c47]"
+            }`}
+          >
+            <div className="flex min-w-0 flex-1 items-start gap-3">
+              <Icon name="info" className="mt-0.5 size-4 shrink-0" />
+              {maintenance ? (
+                <p>
+                  <strong>Sayt ziyarətçilər üçün bağlıdır.</strong> Onlar “Sayt hazırlanır”
+                  səhifəsini və zəng formasını görür. Siz daxil olduğunuz üçün bu brauzerdə saytı
+                  olduğu kimi görürsünüz: dəyişiklikləri yoxlayıb rejimi söndürün.
+                </p>
+              ) : (
+                <p>
+                  <strong>Sayt açıqdır.</strong> Böyük dəyişikliklər zamanı saytı müvəqqəti
+                  bağlaya bilərsiniz: ziyarətçilər “Sayt hazırlanır” səhifəsini görür, siz isə saytı
+                  görməyə davam edirsiniz.
+                </p>
+              )}
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={maintenance}
+              onClick={toggleMaintenance}
+              disabled={switchingMaintenance}
+              className="inline-flex shrink-0 cursor-pointer items-center gap-2.5 font-semibold disabled:cursor-wait disabled:opacity-60"
+            >
+              Tikinti rejimi
+              <span
+                aria-hidden="true"
+                className={`relative h-6 w-11 rounded-full transition-colors ${
+                  maintenance ? "bg-[#9b2f22]" : "bg-[#16201b]/20"
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 size-5 rounded-full bg-white shadow transition-[left] ${
+                    maintenance ? "left-[22px]" : "left-0.5"
+                  }`}
+                />
+              </span>
+            </button>
+          </div>
+
           {/* Site mode */}
           <div
             className={`mb-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-2xl border px-4 py-3 text-sm ${

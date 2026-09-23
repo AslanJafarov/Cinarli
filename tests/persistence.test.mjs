@@ -49,4 +49,20 @@ test("single-process persistence: revisions, concurrency, corruption, recovery a
   await fs.writeFile(leadsFile, "[]");
   await addLead(lead);
   assert.equal((await readLeads()).length, 1); // A failed write didn't poison the queue.
+
+  // Under-construction flag: its own file, atomic writes, damaged file keeps the last state.
+  const { isMaintenanceOn, setMaintenance } = await import("../src/lib/maintenance.js");
+  const flagFile = path.join(directory, "maintenance.json");
+  assert.equal(isMaintenanceOn(), false);
+  assert.equal(await setMaintenance(true), true);
+  assert.equal(isMaintenanceOn(), true);
+  assert.deepEqual(Object.keys(JSON.parse(await fs.readFile(flagFile, "utf8"))).sort(), ["changedAt", "enabled"]);
+  await fs.writeFile(flagFile, "{ broken");
+  assert.equal(isMaintenanceOn(), true);
+  assert.equal(await setMaintenance(false), false);
+  assert.equal(isMaintenanceOn(), false);
+  // Another process flipping the file is picked up by mtime, not only through setMaintenance().
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  await fs.writeFile(flagFile, JSON.stringify({ enabled: true }));
+  assert.equal(isMaintenanceOn(), true);
 });
