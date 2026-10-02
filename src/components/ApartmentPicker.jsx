@@ -7,7 +7,7 @@ import MobileActionBar from "./MobileActionBar";
 import PlanCard from "./PlanCard";
 import { useI18n } from "../i18n/client";
 import { localizeHref } from "../i18n/config";
-import { ordinal, translate } from "../i18n/format";
+import { translate } from "../i18n/format";
 import { defaultFilterValues, filterQuery, filterValuesFromQuery } from "../lib/apartmentFilters";
 
 const statusStyles = {
@@ -311,17 +311,13 @@ export default function ApartmentPicker() {
         </ul>
 
         <div className="mt-[clamp(24px,2.9vw,56px)] grid gap-[clamp(20px,2.45vw,48px)] max-md:hidden lg:grid-cols-[minmax(0,1fr)_30vw]">
-          {/* Plan + floor units */}
+          {/* Plan + units */}
           <section data-admin-preview="apartmentStatuses" className="flex animate-rise-in flex-col gap-[clamp(24px,3.1vw,60px)] rounded-[clamp(18px,2vw,40px)] bg-white p-[clamp(16px,2.45vw,48px)] [animation-delay:420ms] motion-reduce:animate-none md:flex-row">
             <PlanCard apartment={selected} className="md:w-[30vw]" />
 
             <div className="min-w-0 flex-1 md:pt-[0.65vw]">
               <h2 className="text-[clamp(17px,1.57vw,30px)] font-bold leading-tight">
-                {translate(apartmentPage.floorLabel, {
-                  building: selected.building,
-                  floor: selected.floor,
-                  floorOrdinal: ordinal(selected.floor),
-                })}
+                {translate(ui.apartment.building, { building: selected.building })}
               </h2>
 
               {statusLegend}
@@ -371,7 +367,6 @@ export default function ApartmentPicker() {
             {/* Bottom padding keeps a gap above the button when the panel is tight */}
             <dl className="mt-[clamp(8px,1.4vw,28px)] pb-[clamp(12px,1.2vw,24px)]">
               {[
-                [t.floor, selected.floor],
                 [t.balcony, selected.balconies],
                 [t.renovation, selected.renovation],
                 [t.status, apartmentStatuses[selected.status]],

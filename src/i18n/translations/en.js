@@ -112,6 +112,7 @@ const en = {
     apartment: {
       back: "Apartments",
       roomsTitle: "{count}-room apartment",
+      building: "Building {building}",
       unit: "Apartment {unit}",
       about: "About the apartment",
       totalArea: "Total area",
@@ -154,16 +155,16 @@ const en = {
     seo: {
       ogLocale: "en_US",
       apartmentTitle:
-        "{rooms}-room apartment, {area} m² — Building {building}, floor {floor}",
+        "{rooms}-room apartment, {area} m² — Building {building}",
       apartmentDescription:
-        "{rooms}-room apartment of {area} m² at {siteName}: Building {building}, floor {floor}, balconies: {balconies}, finishing: {renovation}. Status: {status}. Floor plan and room areas.",
+        "{rooms}-room apartment of {area} m² at {siteName}: Building {building}, balconies: {balconies}, finishing: {renovation}. Status: {status}. Floor plan and room areas.",
       breadcrumbHome: "Home",
       breadcrumbApartments: "Apartments",
       breadcrumbContact: "Contact",
       breadcrumbGallery: "Gallery",
       ogSubtitle: "{location} · new residential complex",
       ogButton: "CHOOSE AN APARTMENT",
-      ogApartmentMeta: "Building {building} · floor {floor} · Apartment {unit}",
+      ogApartmentMeta: "Building {building} · Apartment {unit}",
     },
     notFound: {
       title: "Page not found.",
@@ -235,7 +236,6 @@ const en = {
   apartmentPage: {
     title: "Choose your apartment",
     subtitle: "Filter and compare available apartments with ease.",
-    floorLabel: "Building {building} · floor {floor}",
   },
 
   apartmentStatuses: {

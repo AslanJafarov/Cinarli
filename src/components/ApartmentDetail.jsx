@@ -8,11 +8,10 @@ import PlanCard from "./PlanCard";
 import { localizeHref } from "../i18n/config";
 import { translate } from "../i18n/format";
 import { getI18n } from "../i18n/server";
-import { ordinal } from "../i18n/format";
 
 export default async function ApartmentDetail({ apartment }) {
   const { locale, content } = await getI18n();
-  const { apartmentPage, apartmentStatuses, apartments, ui } = content;
+  const { apartmentStatuses, apartments, ui } = content;
   const t = ui.apartment;
   const areaText = (value) => translate(ui.common.area, { value });
 
@@ -56,12 +55,8 @@ export default async function ApartmentDetail({ apartment }) {
               {areaText(apartment.area)}
             </h1>
             <p className="mt-[clamp(12px,1.4vw,28px)] text-[clamp(14px,1.15vw,22px)] text-[#6c6b65]">
-              {translate(apartmentPage.floorLabel, {
-                building: apartment.building,
-                floor: apartment.floor,
-                floorOrdinal: ordinal(apartment.floor),
-              })}{" "}
-              · {translate(t.unit, { unit: apartment.unit })}
+              {translate(t.building, { building: apartment.building })} ·{" "}
+              {translate(t.unit, { unit: apartment.unit })}
             </p>
 
             <ul className="mt-[clamp(20px,2.4vw,46px)] flex flex-wrap gap-[clamp(8px,0.8vw,16px)]">

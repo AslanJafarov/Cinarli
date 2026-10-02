@@ -34,7 +34,6 @@ export const siteImages = {
 export const apartmentPage = {
   title: "Mənzilini seç",
   subtitle: "Mövcud mənzilləri rahat şəkildə filtrlə və müqayisə et.",
-  floorLabel: "Bina {building} · {floorOrdinal} mərtəbə",
 };
 
 export const apartmentStatuses = {

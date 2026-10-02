@@ -1,9 +1,9 @@
 import { siteUrl } from "./siteUrl";
 import { defaultLocale, localizeHref, locales } from "@/i18n/config";
 import { getContent } from "@/i18n/content";
-import { ordinal, translate } from "@/i18n/format";
+import { translate } from "@/i18n/format";
 
-export { ordinal, siteUrl };
+export { siteUrl };
 
 export const absoluteUrl = (path = "/") => new URL(path, `${siteUrl}/`).toString();
 
@@ -79,8 +79,6 @@ function apartmentVars(apartment, locale) {
     rooms: apartment.rooms,
     area: apartment.area,
     building: apartment.building,
-    floor: apartment.floor,
-    floorOrdinal: ordinal(apartment.floor),
     unit: apartment.unit,
     balconies: apartment.balconies,
     renovation: lower(apartment.renovation, locale),
@@ -174,7 +172,6 @@ export function apartmentJsonLd(apartment, locale = defaultLocale) {
       value: Number(apartment.area),
       unitCode: "MTK",
     },
-    floorLevel: String(apartment.floor),
     containedInPlace: {
       "@type": "ApartmentComplex",
       "@id": complexId(),

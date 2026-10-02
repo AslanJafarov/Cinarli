@@ -111,6 +111,7 @@ export const ui = {
   apartment: {
     back: "Mənzillər",
     roomsTitle: "{count} otaqlı mənzil",
+    building: "Bina {building}",
     unit: "Mənzil {unit}",
     about: "Mənzil haqqında",
     totalArea: "Ümumi sahə",
@@ -153,16 +154,16 @@ export const ui = {
   seo: {
     ogLocale: "az_AZ",
     apartmentTitle:
-      "{rooms} otaqlı mənzil, {area} m² — Bina {building}, {floorOrdinal} mərtəbə",
+      "{rooms} otaqlı mənzil, {area} m² — Bina {building}",
     apartmentDescription:
-      "{siteName}-da {rooms} otaqlı, {area} m² sahəli mənzil: Bina {building}, {floorOrdinal} mərtəbə, {balconies} balkon, təmir: {renovation}. Status: {status}. Plan və otaqların sahələri.",
+      "{siteName}-da {rooms} otaqlı, {area} m² sahəli mənzil: Bina {building}, {balconies} balkon, təmir: {renovation}. Status: {status}. Plan və otaqların sahələri.",
     breadcrumbHome: "Ana səhifə",
     breadcrumbApartments: "Mənzillər",
     breadcrumbContact: "Əlaqə",
     breadcrumbGallery: "Qalereya",
     ogSubtitle: "{location} · yeni yaşayış kompleksi",
     ogButton: "MƏNZİL SEÇ",
-    ogApartmentMeta: "Bina {building} · {floorOrdinal} mərtəbə · Mənzil {unit}",
+    ogApartmentMeta: "Bina {building} · Mənzil {unit}",
   },
   notFound: {
     title: "Səhifə tapılmadı.",

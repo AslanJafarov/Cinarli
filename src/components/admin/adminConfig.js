@@ -271,7 +271,6 @@ const FIELD_LABELS = {
   progress: "İrəliləyiş (%)",
   updates: "Yeniliklər",
   allUpdatesLabel: "“Bütün yeniliklər” düyməsi",
-  floorLabel: "Mərtəbə etiketi",
   field: "Mənzil sahəsi (field)",
   type: "Tip (match / range)",
   defaultValue: "Standart seçim",

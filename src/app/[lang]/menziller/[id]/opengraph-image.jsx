@@ -4,7 +4,6 @@ import { uploadJpegDataUri } from "@/lib/media";
 import { getContent } from "@/i18n/content";
 import { translate } from "@/i18n/format";
 import { assetDataUri, ogFonts, toJpegResponse } from "@/lib/og";
-import { ordinal } from "@/lib/seo";
 
 export const alt = "Çınarlı Park";
 export const size = { width: 1200, height: 630 };
@@ -74,8 +73,6 @@ export default async function ApartmentOpengraphImage({ params }) {
             <div style={{ marginTop: 22, fontSize: 28, color: "#6b6a63" }}>
               {translate(ui.seo.ogApartmentMeta, {
                 building: apartment.building,
-                floor: apartment.floor,
-                floorOrdinal: ordinal(apartment.floor),
                 unit: apartment.unit,
               })}
             </div>

@@ -117,6 +117,7 @@ const ru = {
     apartment: {
       back: "Квартиры",
       roomsTitle: "{count}-комнатная квартира",
+      building: "Корпус {building}",
       unit: "Квартира {unit}",
       about: "О квартире",
       totalArea: "Общая площадь",
@@ -159,16 +160,16 @@ const ru = {
     seo: {
       ogLocale: "ru_RU",
       apartmentTitle:
-        "{rooms}-комнатная квартира, {area} м² — корпус {building}, {floor}-й этаж",
+        "{rooms}-комнатная квартира, {area} м² — корпус {building}",
       apartmentDescription:
-        "{siteName}: {rooms}-комнатная квартира площадью {area} м² — корпус {building}, {floor}-й этаж, балконов: {balconies}, отделка: {renovation}. Статус: {status}. Планировка и площади комнат.",
+        "{siteName}: {rooms}-комнатная квартира площадью {area} м² — корпус {building}, балконов: {balconies}, отделка: {renovation}. Статус: {status}. Планировка и площади комнат.",
       breadcrumbHome: "Главная",
       breadcrumbApartments: "Квартиры",
       breadcrumbContact: "Контакты",
       breadcrumbGallery: "Галерея",
       ogSubtitle: "{location} · новый жилой комплекс",
       ogButton: "ВЫБРАТЬ КВАРТИРУ",
-      ogApartmentMeta: "Корпус {building} · {floor}-й этаж · Квартира {unit}",
+      ogApartmentMeta: "Корпус {building} · Квартира {unit}",
     },
     notFound: {
       title: "Страница не найдена.",
@@ -242,7 +243,6 @@ const ru = {
   apartmentPage: {
     title: "Выберите квартиру",
     subtitle: "Удобно фильтруйте и сравнивайте свободные квартиры.",
-    floorLabel: "Корпус {building} · {floor}-й этаж",
   },
 
   apartmentStatuses: {
