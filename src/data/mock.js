@@ -22,8 +22,9 @@ export const projectFeatures = [
   },
 ];
 
-// Large photos of the home page sections; see src/lib/siteImages.js. "built-in" = sample photo.
+// The logo and the large photos of the home page sections; see src/lib/siteImages.js. "built-in" = sample photo.
 export const siteImages = {
+  logo: null,
   hero: "built-in",
   project: "built-in",
   advantages: "built-in",

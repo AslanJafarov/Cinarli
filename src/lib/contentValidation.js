@@ -25,7 +25,12 @@ function image(value, path, nullable = false) {
 function shape(value, examples, path) {
   if (/^siteImages\./.test(path)) {
     if (value === "built-in" || value === null) return;
-    return image(value, path);
+    image(value, path);
+    // Logo size, see LOGO_SIZES in src/lib/siteImages.js.
+    if (path === "siteImages.logo" && value.size !== undefined && !["small", "medium", "large"].includes(value.size)) {
+      fail(path + ".size", "loqo ölçüsü düzgün deyil.");
+    }
+    return;
   }
   if (/\.(cover|planImage)$/.test(path)) return image(value, path, true);
   const sample = examples[0];
@@ -43,7 +48,8 @@ function shape(value, examples, path) {
     const keys = new Set(templates.flatMap(Object.keys));
     for (const key of keys) {
       const fieldPath = `${path}.${key}`;
-      const optional = key === "plan" || key === "position" || templates.some((item) => !(key in item));
+      // Image slots added later (the logo) are missing from older saves.
+      const optional = key === "plan" || key === "position" || path === "siteImages" || templates.some((item) => !(key in item));
       if (!(key in value)) {
         if (!optional) fail(fieldPath, "tələb olunur.");
       } else {

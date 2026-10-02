@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { logout, saveSiteData, setMaintenanceMode, setSiteMode } from "@/app/admin/actions";
@@ -14,6 +15,7 @@ import SiteImagesEditor from "./SiteImagesEditor";
 import TranslationsEditor from "./TranslationsEditor";
 import { buttonClass, Icon } from "./ui";
 import { validateContent } from "../../lib/contentValidation";
+import { LOGO_CLASS, logoStyle, siteLogo } from "../../lib/siteImages";
 
 // Keeps only sections the website knows about, falling back to the original data.
 function mergeKnownSections(initialData, incoming) {
@@ -236,6 +238,8 @@ export default function AdminDashboard({
         })}`
       : "Hələ yadda saxlanmayıb";
 
+  const logo = siteLogo(data.siteImages);
+
   const buildingOptions = (
     data.apartmentFilters?.find((filter) => filter.field === "building")?.options ?? []
   )
@@ -248,7 +252,12 @@ export default function AdminDashboard({
       <aside className="bg-[#13271f] text-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-72 lg:shrink-0 lg:flex-col">
         <div className="flex items-center justify-between gap-4 px-5 py-4 lg:px-7 lg:py-7">
           <div>
-            <p className="text-2xl font-bold leading-none tracking-tight">ÇINARLI</p>
+            <p className="flex items-center gap-2 text-2xl font-bold leading-none tracking-tight">
+              {logo && (
+                <Image src={logo} alt="" sizes="120px" className={LOGO_CLASS} style={logoStyle(logo)} />
+              )}
+              ÇINARLI
+            </p>
             <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/50">
               Admin panel
             </p>

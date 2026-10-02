@@ -61,10 +61,10 @@ export const MAIN_SECTIONS = [
     key: "siteImages",
     title: "Sayt şəkilləri",
     icon: "photo",
-    summary: "Giriş, layihə, üstünlüklər, tikinti",
+    summary: "Loqo, giriş, layihə, üstünlüklər, tikinti",
     description:
-      "Ana səhifə bölmələrinin böyük şəkilləri. Şəkil yüklənməyibsə, həmin yerdə brend yaşıl fonu görünür.",
-    where: "Ana səhifə: giriş, “Layihə”, “Üstünlüklər” və “Tikinti” bölmələri",
+      "Menyudakı loqo və ana səhifə bölmələrinin böyük şəkilləri. Şəkil yüklənməyibsə, həmin yerdə brend yaşıl fonu görünür.",
+    where: "Bütün səhifələrin yuxarı menyusu; ana səhifə: giriş, “Layihə”, “Üstünlüklər” və “Tikinti” bölmələri",
     href: "/",
     preview: { path: "/" },
   },

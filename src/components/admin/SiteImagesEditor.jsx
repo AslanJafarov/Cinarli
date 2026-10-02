@@ -2,11 +2,13 @@
 
 import Image from "next/image";
 import { useId, useState } from "react";
-import { heroImages, SITE_IMAGE_SLOTS, siteImage } from "../../lib/siteImages";
+import { heroImages, LOGO_CLASS, LOGO_SIZES, logoStyle, SITE_IMAGE_SLOTS, siteImage, siteLogo } from "../../lib/siteImages";
 import { uploadImage } from "./imageUtils";
 import { buttonClass, Icon, IconButton } from "./ui";
 
 const ACCEPTED_IMAGES = ["image/png", "image/jpeg", "image/webp"];
+// The logo needs a transparent background, which JPG can't have.
+const ACCEPTED_LOGOS = ["image/png", "image/webp"];
 
 const SLOT_INFO = {
   hero: {
@@ -30,6 +32,125 @@ const SLOT_INFO = {
     hint: "Üfüqi, ən azı 1600 px enində.",
   },
 };
+
+// The logo before "ÇINARLI" in the site's navbar. Shown on both the dark and the light bar.
+function LogoSlot({ value, onChange }) {
+  const inputId = useId();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+  const logo = siteLogo({ logo: value });
+
+  async function upload(file) {
+    if (!file) return;
+    if (!ACCEPTED_LOGOS.includes(file.type)) {
+      setError("Loqo yalnız şəffaf fonlu PNG və ya WEBP formatında olmalıdır.");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const uploaded = await uploadImage(file, 600);
+      // A new file keeps the chosen size.
+      onChange(logo?.size ? { ...uploaded, size: logo.size } : uploaded);
+    } catch {
+      setError("Şəkil yüklənmədi. Yenidən cəhd edin.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <li className="overflow-hidden rounded-2xl bg-white shadow-[0_1px_2px_rgba(22,32,27,0.06)] md:col-span-2">
+      {/* The two navbar backgrounds: over the hero / inner pages, and once scrolled */}
+      <div className="grid sm:grid-cols-2">
+        {[
+          ["bg-[#19241f] text-white", "Tünd fon"],
+          ["bg-[#f3f0e9] text-[#1a2a22]", "Açıq fon"],
+        ].map(([colors, label]) => (
+          <div key={label} className={`relative flex h-32 items-center justify-center ${colors}`}>
+            <span className="flex items-center gap-[0.3em] text-[32px] font-bold leading-none tracking-tight">
+              {logo && (
+                <Image src={logo} alt="" sizes="160px" className={LOGO_CLASS} style={logoStyle(logo)} />
+              )}
+              ÇINARLI
+            </span>
+            <span className="absolute left-3 top-3 text-[11px] font-semibold uppercase tracking-[0.14em] opacity-50">
+              {label}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="p-4 sm:p-5">
+        <h3 className="font-bold">Loqo</h3>
+        <p className="mt-1 text-sm text-[#77766f]">
+          Saytın yuxarı menyusunda, “ÇINARLI” yazısının solunda.
+        </p>
+        <p className="mt-1 text-xs text-[#9a9991]">
+          <strong className="font-semibold text-[#4d4c47]">Format: yalnız PNG və ya WEBP, şəffaf fonla.</strong>{" "}
+          Kvadrata yaxın, ən azı 300 px. Yuxarıdakı hər iki fonda aydın görünməlidir.
+        </p>
+
+        {logo && (
+          <fieldset className="mt-4">
+            <legend className="mb-1.5 text-xs font-semibold text-[#6b6a63]">Ölçü</legend>
+            <div className="inline-flex rounded-full border border-[#16201b]/15 bg-white p-1">
+              {Object.entries(LOGO_SIZES).map(([size, { label }]) => {
+                const checked = (logo.size ?? "medium") === size;
+                return (
+                  <label
+                    key={size}
+                    className={`cursor-pointer rounded-full px-4 py-1.5 text-sm font-semibold transition has-focus-visible:ring-2 has-focus-visible:ring-[#24503a]/40 ${
+                      checked ? "bg-[#13271f] text-white" : "text-[#4d4c47] hover:text-[#16201b]"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name={`${inputId}-size`}
+                      value={size}
+                      checked={checked}
+                      onChange={() => onChange({ ...logo, size })}
+                      className="sr-only"
+                    />
+                    {label}
+                  </label>
+                );
+              })}
+            </div>
+          </fieldset>
+        )}
+
+        {error && (
+          <p role="alert" className="mt-3 text-sm font-semibold text-[#9b2f22]">
+            {error}
+          </p>
+        )}
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <label htmlFor={inputId} className={`${buttonClass.primary} ${busy ? "opacity-60" : ""}`}>
+            <Icon name="upload" /> {busy ? "Yüklənir…" : logo ? "Loqonu dəyiş" : "Loqo yüklə"}
+            <input
+              id={inputId}
+              type="file"
+              accept={ACCEPTED_LOGOS.join(",")}
+              disabled={busy}
+              className="sr-only"
+              onChange={(event) => {
+                upload(event.target.files?.[0]);
+                event.target.value = "";
+              }}
+            />
+          </label>
+          {logo && (
+            <button type="button" onClick={() => onChange(null)} className={buttonClass.secondary}>
+              <Icon name="trash" /> Sil
+            </button>
+          )}
+        </div>
+      </div>
+    </li>
+  );
+}
 
 function Slot({ slot, value, onChange }) {
   const inputId = useId();
@@ -241,10 +362,14 @@ function HeroSlot({ value, onChange }) {
   );
 }
 
-/** The four large photos of the home page sections. */
+/** The navbar logo and the four large photos of the home page sections. */
 export default function SiteImagesEditor({ siteImages, onChange }) {
   return (
     <ul className="grid gap-4 md:grid-cols-2">
+      <LogoSlot
+        value={siteImages?.logo ?? null}
+        onChange={(value) => onChange((current) => ({ ...current, logo: value }))}
+      />
       {SITE_IMAGE_SLOTS.map((slot) =>
         slot === "hero" ? (
           <HeroSlot

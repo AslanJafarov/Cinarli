@@ -1,11 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useI18n } from "../i18n/client";
 import { localeNames, locales, localizeHref, stripLocale } from "../i18n/config";
 import { containDialogTab } from "../lib/dialogFocus";
+import { LOGO_CLASS, logoStyle, siteLogo } from "../lib/siteImages";
 
 const NAV_ITEMS = [
   // Plain anchors so the browser smooth-scrolls when already on the home page.
@@ -48,6 +50,21 @@ function NavItem({ item, className, style, onClick }) {
     <Component href={item.href} className={className} style={style} onClick={onClick}>
       {item.label}
     </Component>
+  );
+}
+
+// The logo uploaded in the admin panel ("Sayt şəkilləri"), sized to the wordmark next to it.
+function Logo({ logo }) {
+  if (!logo) return null;
+  return (
+    <Image
+      src={logo}
+      alt=""
+      priority
+      sizes="160px"
+      className={LOGO_CLASS}
+      style={logoStyle(logo)}
+    />
   );
 }
 
@@ -128,6 +145,7 @@ export default function Navbar({ variant = "transparent", activePage }) {
   const dark = variant === "dark";
   const scrolled = !dark && active !== "top";
   const { phoneHref, whatsappHref } = content.contactPage.office;
+  const logo = siteLogo(content.siteImages);
 
   const items = NAV_ITEMS.map((item) => ({
     ...item,
@@ -194,8 +212,9 @@ export default function Navbar({ variant = "transparent", activePage }) {
       >
         <Link
           href={localizeHref(locale, "/")}
-          className="text-[clamp(24px,2.75vw,48px)] font-bold leading-none tracking-tight"
+          className="flex items-center gap-[0.3em] text-[clamp(24px,2.75vw,48px)] font-bold leading-none tracking-tight"
         >
+          <Logo logo={logo} />
           ÇINARLI
         </Link>
 
@@ -259,8 +278,9 @@ export default function Navbar({ variant = "transparent", activePage }) {
           <Link
             href={localizeHref(locale, "/")}
             onClick={closeMenu}
-            className="text-[24px] font-bold leading-none tracking-tight"
+            className="flex items-center gap-[0.3em] text-[24px] font-bold leading-none tracking-tight"
           >
+            <Logo logo={logo} />
             ÇINARLI
           </Link>
           <div className="flex items-center gap-4">

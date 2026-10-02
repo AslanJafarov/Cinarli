@@ -17,7 +17,8 @@ export const MEDIA_PREFIX = "/media/";
 export const MEDIA_NAME = /^[a-f0-9-]{36}\.webp$/;
 
 /**
- * mode "mock": the site shows src/data/mock.js, as before the admin panel saved anything.
+ * mode "mock": the site shows src/data/mock.js, as before the admin panel saved anything
+ * (only an uploaded logo is taken from the saved data).
  * mode "production": the site shows the saved data. Apartments start empty; every other section
  * the admin hasn't saved yet (texts, section photos, gallery, news) falls back to mock.js.
  */
@@ -105,16 +106,23 @@ const mockSiteData = { mode: "mock", data: mockData, translations: {} };
 // One object per saved file, so callers can cache what they build from it.
 const siteDataByStore = new WeakMap();
 
+// The logo is branding, not sample content: once uploaded it shows in mock mode too.
+function mockDataWithLogo(saved = {}) {
+  const logo = saved.siteImages?.logo;
+  if (!logo) return mockSiteData;
+  return { ...mockSiteData, data: { ...mockData, siteImages: { ...mockData.siteImages, logo } } };
+}
+
 /** The data the public site renders, plus the mode it came from. */
 export function getSiteData() {
   const store = readStore();
-  if (store.mode !== "production") return mockSiteData;
   if (!siteDataByStore.has(store)) {
-    siteDataByStore.set(store, {
-      mode: "production",
-      data: productionData(store.data),
-      translations: store.translations,
-    });
+    siteDataByStore.set(
+      store,
+      store.mode === "production"
+        ? { mode: "production", data: productionData(store.data), translations: store.translations }
+        : mockDataWithLogo(store.data),
+    );
   }
   return siteDataByStore.get(store);
 }
