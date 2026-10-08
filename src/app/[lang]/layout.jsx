@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import SiteClosedBanner from "@/components/SiteClosedBanner";
+import YandexMetrika from "@/components/YandexMetrika";
 import { hasLocale, locales } from "@/i18n/config";
 import { I18nProvider } from "@/i18n/client";
 import { getContent } from "@/i18n/content";
@@ -50,6 +51,7 @@ export default async function RootLayout({ children, params }) {
           {children}
         </I18nProvider>
         <SiteClosedBanner />
+        <YandexMetrika />
       </body>
     </html>
   );
