@@ -13,7 +13,7 @@ export default async function Header() {
   return (
     <header
       data-admin-preview="siteImages"
-      className={`relative isolate h-[max(560px,39.4vw)] w-full overflow-hidden text-white max-md:h-auto max-md:min-h-[640px] max-md:pb-[132px] ${
+      className={`relative isolate min-h-[max(560px,39.4vw)] w-full md:pb-[calc(clamp(44px,3.6vw,70px)_+_clamp(24px,2.4vw,48px))] overflow-hidden text-white max-md:h-auto max-md:min-h-[640px] max-md:pb-[132px] ${
         photos.length > 0 ? "bg-[#3f7fc4]" : "bg-[#24503a]"
       }`}
     >
@@ -125,7 +125,9 @@ export default async function Header() {
         <rect width="2000" height="120" fill="url(#topShade)" />
       </svg>
 
-      {/* Hero copy (top padding leaves room for the fixed navbar) */}
+      {/* Hero copy (top padding leaves room for the fixed navbar). The hero grows with longer
+          copy (RU/EN), and its bottom padding keeps the buttons clear of the quick search card
+          that overlaps the hero's bottom edge. */}
       <div className="px-page pt-[calc(var(--nav-h)_+_clamp(24px,3.2vw,60px))]">
         <h1 className="leading-[1.1] max-md:mt-6 max-md:text-[34px] max-md:font-bold">
           {/* Brand + location in the page's main heading */}

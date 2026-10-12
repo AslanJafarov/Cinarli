@@ -215,7 +215,7 @@ export default function Navbar({ variant = "transparent", activePage }) {
           className="flex items-center gap-[0.3em] text-[clamp(24px,2.75vw,48px)] font-bold leading-none tracking-tight"
         >
           <Logo logo={logo} />
-          ÇINARLI
+          ÇİNARLI
         </Link>
 
         <nav className="hidden items-center gap-[clamp(18px,2.8vw,64px)] lg:flex">
@@ -281,7 +281,7 @@ export default function Navbar({ variant = "transparent", activePage }) {
             className="flex items-center gap-[0.3em] text-[24px] font-bold leading-none tracking-tight"
           >
             <Logo logo={logo} />
-            ÇINARLI
+            ÇİNARLI
           </Link>
           <div className="flex items-center gap-4">
             <LanguageSwitcher

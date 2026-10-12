@@ -3,13 +3,13 @@
 const en = {
   ui: {
     meta: {
-      homeTitle: "Çınarlı Park",
+      homeTitle: "Çinarlı Park",
       homeDescription:
-        "Çınarlı Park is a residential complex that balances family life, a green courtyard and easy access to the city.",
-      apartmentsTitle: "Choose your apartment | Çınarlı Park",
-      contactTitle: "Contact | Çınarlı Park",
-      apartmentTitle: "{id} | Çınarlı Park",
-      apartmentNotFound: "Apartment not found | Çınarlı Park",
+        "Çinarlı Park is a residential complex that balances family life, a green courtyard and easy access to the city.",
+      apartmentsTitle: "Choose your apartment | Çinarlı Park",
+      contactTitle: "Contact | Çinarlı Park",
+      apartmentTitle: "{id} | Çinarlı Park",
+      apartmentNotFound: "Apartment not found | Çinarlı Park",
     },
     common: {
       rooms: { one: "{count} room", other: "{count} rooms" },
@@ -33,10 +33,10 @@ const en = {
       language: "Language",
     },
     hero: {
-      imageAlt: "Çınarlı Park residential complex",
+      imageAlt: "Çinarlı Park residential complex",
       titleLines: ["In the city.", "Closer to nature."],
       description:
-        "Çınarlı Park is a residential complex that balances family life, a green courtyard and easy access to the city.",
+        "Çinarlı Park is a residential complex that balances family life, a green courtyard and easy access to the city.",
       primary: "Choose an apartment",
       secondary: "Explore the project",
     },
@@ -46,7 +46,7 @@ const en = {
       floor: "Floor",
     },
     overview: {
-      imageAlt: "Çınarlı Park buildings",
+      imageAlt: "Çinarlı Park buildings",
       apartmentsButton: "View apartments",
       locationButton: "Location",
     },
@@ -54,7 +54,7 @@ const en = {
       imageAlt: "Modern residential building among trees",
     },
     location: {
-      mapTitle: "Çınarlı Park on the map — {address}",
+      mapTitle: "Çinarlı Park on the map — {address}",
     },
     empty: {
       noApartmentsTitle: "No apartments are available right now",
@@ -327,7 +327,7 @@ const en = {
       { alt: "White residential building with green terraces" },
       { alt: "Modern kitchen with marble surfaces" },
       { alt: "Green balcony with a glass railing" },
-      { alt: "Çınarlı Park residential complex" },
+      { alt: "Çinarlı Park residential complex" },
       { alt: "Minimalist living room" },
       { alt: "Modern residential building with green balconies" },
       { alt: "Bedroom with indoor plants" },
@@ -453,7 +453,7 @@ const en = {
       submitLabel: "Send",
       successMessage: "Thank you! Our sales team will contact you shortly.",
     },
-    copyright: "Çınarlı Park. All rights reserved.",
+    copyright: "Çinarlı Park. All rights reserved.",
     links: [
       { label: "Project" },
       { label: "Apartments" },
@@ -469,35 +469,35 @@ const en = {
     tagline: "In the city. Closer to nature.",
     locationLabel: "Baku, Binagadi district",
     home: {
-      title: "Çınarlı Park — new-build apartments in Baku",
+      title: "Çinarlı Park — new-build apartments in Baku",
       description:
-        "Çınarlı Park is a new residential complex with a green, car-free courtyard in Baku's Binagadi district. 2- and 3-room apartments, underground parking, close to the metro.",
+        "Çinarlı Park is a new residential complex with a green, car-free courtyard in Baku's Binagadi district. 2- and 3-room apartments, underground parking, close to the metro.",
     },
     apartments: {
       title: "Apartments — 2- and 3-room new-build apartments",
       description:
-        "Choose apartments at Çınarlı Park by rooms, area, floor and status: floor plans, room areas and availability.",
+        "Choose apartments at Çinarlı Park by rooms, area, floor and status: floor plans, room areas and availability.",
     },
     contact: {
       title: "Contact — sales office",
       description:
-        "Çınarlı Park sales office: phone, WhatsApp, opening hours and address. FAQs about price, down payment and reservations.",
+        "Çinarlı Park sales office: phone, WhatsApp, opening hours and address. FAQs about price, down payment and reservations.",
     },
     news: {
       "title": "News — construction and project updates",
-      "description": "The latest from Çınarlı Park: construction progress, the sales office and project updates."
+      "description": "The latest from Çinarlı Park: construction progress, the sales office and project updates."
     },
     gallery: {
       title: "Gallery — project photos",
       description:
-        "Çınarlı Park photo gallery: building exteriors, apartment interiors, balconies, courtyard and floor plans.",
+        "Çinarlı Park photo gallery: building exteriors, apartment interiors, balconies, courtyard and floor plans.",
     },
   },
 
   projectOverview: {
     titleLines: ["In the city.", "Closer to nature."],
     description:
-      "Çınarlı Park is a modern residential complex that brings together city convenience, family life and greenery.",
+      "Çinarlı Park is a modern residential complex that brings together city convenience, family life and greenery.",
     stats: [
       { label: "buildings" },
       { label: "apartments" },
@@ -539,7 +539,7 @@ const en = {
   ],
   maintenance: {
     title: "Website under construction",
-    text: "The Çınarlı Park website is being updated and will be back shortly. To learn about the apartments, leave your number and our sales team will call you.",
+    text: "The Çinarlı Park website is being updated and will be back shortly. To learn about the apartments, leave your number and our sales team will call you.",
   },
 };
 

@@ -2,13 +2,13 @@
 // Plural-aware entries are objects ({ one, few, many, other }); see i18n/format.js.
 export const ui = {
   meta: {
-    homeTitle: "Çınarlı Park",
+    homeTitle: "Çinarlı Park",
     homeDescription:
       "Çinarlı Park - ailə həyatı, yaşıl həyət və rahat şəhər əlaqəsinin balansını yaradan yaşayış kompleksi.",
-    apartmentsTitle: "Mənzilini seç | Çınarlı Park",
-    contactTitle: "Əlaqə | Çınarlı Park",
-    apartmentTitle: "{id} | Çınarlı Park",
-    apartmentNotFound: "Mənzil tapılmadı | Çınarlı Park",
+    apartmentsTitle: "Mənzilini seç | Çinarlı Park",
+    contactTitle: "Əlaqə | Çinarlı Park",
+    apartmentTitle: "{id} | Çinarlı Park",
+    apartmentNotFound: "Mənzil tapılmadı | Çinarlı Park",
   },
   common: {
     rooms: { other: "{count} otaq" },
@@ -32,7 +32,7 @@ export const ui = {
     language: "Dil",
   },
   hero: {
-    imageAlt: "Çınarlı Park yaşayış kompleksi",
+    imageAlt: "Çinarlı Park yaşayış kompleksi",
     titleLines: ["Şəhərin içində.", "Təbiətə daha yaxın."],
     description:
       "Çinarlı Park - ailə həyatı, yaşıl həyət və rahat şəhər əlaqəsinin balansını yaradan yaşayış kompleksi.",
@@ -45,7 +45,7 @@ export const ui = {
     floor: "Mərtəbə",
   },
   overview: {
-    imageAlt: "Çınarlı Park binaları",
+    imageAlt: "Çinarlı Park binaları",
     apartmentsButton: "Mənzillərə bax",
     locationButton: "Yerləşmə",
   },
@@ -53,7 +53,7 @@ export const ui = {
     imageAlt: "Ağaclar arasında müasir yaşayış binası",
   },
   location: {
-    mapTitle: "Çınarlı Park xəritədə — {address}",
+    mapTitle: "Çinarlı Park xəritədə — {address}",
   },
   empty: {
     noApartmentsTitle: "Hazırda satışda mənzil yoxdur",

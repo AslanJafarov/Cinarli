@@ -322,7 +322,10 @@ export default function ApartmentPicker() {
 
               {statusLegend}
 
-              <div className="mt-[clamp(18px,2.1vw,40px)] grid max-w-[clamp(220px,16.3vw,320px)] grid-cols-2 gap-x-[clamp(10px,1.2vw,22px)] gap-y-[clamp(12px,1.5vw,28px)]">
+              {/* Two rows (4 flats) are visible; more scroll inside the list, so a long list
+                  doesn't stretch the card and push the plan down. Row height = tile padding
+                  + two 1.5-line texts + their gap; max height = two rows + one row gap. */}
+              <div className="mt-[clamp(18px,2.1vw,40px)] grid max-h-[calc(2*(2*clamp(12px,1.2vw,22px)+3*clamp(11px,0.86vw,17px)+clamp(8px,0.9vw,18px))+clamp(12px,1.5vw,28px))] max-w-[calc(clamp(220px,16.3vw,320px)+12px)] grid-cols-2 gap-x-[clamp(10px,1.2vw,22px)] gap-y-[clamp(12px,1.5vw,28px)] overflow-y-auto pr-[12px] [scrollbar-width:thin]">
                 {filteredApartments.map((apartment) => {
                   const isSelected = apartment.id === selected.id;
                   return (

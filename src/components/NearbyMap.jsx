@@ -32,7 +32,7 @@ function buildingPin() {
   const pin = document.createElement("div");
   pin.className =
     "rounded-[12px] bg-[#12271e] px-3 py-2 text-[11px] font-bold uppercase leading-tight tracking-[0.04em] text-white shadow-lg";
-  for (const word of ["Çınarlı", "Park"]) {
+  for (const word of ["Çinarlı", "Park"]) {
     const line = document.createElement("span");
     line.className = "block";
     line.textContent = word;
@@ -105,7 +105,7 @@ export default function NearbyMap({
         map,
         position: origin,
         content: buildingPin(),
-        title: "Çınarlı Park",
+        title: "Çinarlı Park",
         zIndex: 10,
       });
 

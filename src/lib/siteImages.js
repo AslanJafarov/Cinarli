@@ -22,7 +22,7 @@ const builtIn = {
 // Sample hero slides; the first one is placed for its sky (see Header.jsx).
 const builtInHero = [heroBuilding, greenery, exteriorSunset, balconies, exteriorBeige];
 
-// Logo sizes in em of the "ÇINARLI" wordmark next to it. "medium" when none was chosen.
+// Logo sizes in em of the "ÇİNARLI" wordmark next to it. "medium" when none was chosen.
 // The upload itself carries the choice: { src, width, height, size }.
 export const LOGO_SIZES = {
   small: { label: "Kiçik", height: 0.8 },
@@ -38,7 +38,7 @@ export function logoStyle(logo) {
   return { height: `${height}em`, maxWidth: `${height * 2.4}em` };
 }
 
-/** The uploaded logo shown before "ÇINARLI" in the navbar, or null. There is no sample logo. */
+/** The uploaded logo shown before "ÇİNARLI" in the navbar, or null. There is no sample logo. */
 export function siteLogo(siteImages) {
   const value = siteImages?.logo;
   return value?.src && value.width && value.height ? value : null;

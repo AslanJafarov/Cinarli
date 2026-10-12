@@ -5,7 +5,7 @@ import { getContent } from "@/i18n/content";
 import { translate } from "@/i18n/format";
 import { assetDataUri, ogFonts, toJpegResponse } from "@/lib/og";
 
-export const alt = "Çınarlı Park";
+export const alt = "Çinarlı Park";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/jpeg";
 
@@ -60,7 +60,7 @@ export default async function ApartmentOpengraphImage({ params }) {
           }}
         >
           <div style={{ fontSize: 30, fontWeight: 700, letterSpacing: -1 }}>
-            ÇINARLI PARK
+            ÇİNARLI PARK
           </div>
 
           <div style={{ display: "flex", flexDirection: "column" }}>

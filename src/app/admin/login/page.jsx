@@ -13,7 +13,7 @@ const page = async () => {
   return (
     <main className="grid min-h-screen flex-1 place-items-center bg-[#13271f] px-5 py-10">
       <div className="w-full max-w-sm">
-        <p className="text-center text-3xl font-bold tracking-tight text-white">ÇINARLI</p>
+        <p className="text-center text-3xl font-bold tracking-tight text-white">ÇİNARLI</p>
         <p className="mt-1.5 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-white/50">
           Admin panel
         </p>

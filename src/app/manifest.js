@@ -3,7 +3,7 @@ import { seo } from "@/data/mock";
 export default function manifest() {
   return {
     name: seo.siteName,
-    short_name: "Çınarlı",
+    short_name: "Çinarlı",
     description: seo.home.description,
     lang: "az",
     start_url: "/",

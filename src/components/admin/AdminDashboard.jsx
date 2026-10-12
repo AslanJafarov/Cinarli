@@ -256,7 +256,7 @@ export default function AdminDashboard({
               {logo && (
                 <Image src={logo} alt="" sizes="120px" className={LOGO_CLASS} style={logoStyle(logo)} />
               )}
-              ÇINARLI
+              ÇİNARLI
             </p>
             <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/50">
               Admin panel

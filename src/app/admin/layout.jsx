@@ -2,7 +2,7 @@ import { fontVariables } from "@/lib/fonts";
 import "../globals.css";
 
 export const metadata = {
-  title: { default: "Admin panel", template: "%s | Çınarlı Park" },
+  title: { default: "Admin panel", template: "%s | Çinarlı Park" },
   robots: { index: false, follow: false },
 };
 

@@ -33,7 +33,7 @@ const SLOT_INFO = {
   },
 };
 
-// The logo before "ÇINARLI" in the site's navbar. Shown on both the dark and the light bar.
+// The logo before "ÇİNARLI" in the site's navbar. Shown on both the dark and the light bar.
 function LogoSlot({ value, onChange }) {
   const inputId = useId();
   const [busy, setBusy] = useState(false);
@@ -72,7 +72,7 @@ function LogoSlot({ value, onChange }) {
               {logo && (
                 <Image src={logo} alt="" sizes="160px" className={LOGO_CLASS} style={logoStyle(logo)} />
               )}
-              ÇINARLI
+              ÇİNARLI
             </span>
             <span className="absolute left-3 top-3 text-[11px] font-semibold uppercase tracking-[0.14em] opacity-50">
               {label}
@@ -84,7 +84,7 @@ function LogoSlot({ value, onChange }) {
       <div className="p-4 sm:p-5">
         <h3 className="font-bold">Loqo</h3>
         <p className="mt-1 text-sm text-[#77766f]">
-          Saytın yuxarı menyusunda, “ÇINARLI” yazısının solunda.
+          Saytın yuxarı menyusunda, “ÇİNARLI” yazısının solunda.
         </p>
         <p className="mt-1 text-xs text-[#9a9991]">
           <strong className="font-semibold text-[#4d4c47]">Format: yalnız PNG və ya WEBP, şəffaf fonla.</strong>{" "}

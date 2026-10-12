@@ -17,7 +17,7 @@ export default async function MaintenancePage() {
       className="flex flex-1 flex-col bg-[#13271f] px-page py-[clamp(28px,4vw,72px)] text-white"
     >
       <header className="flex items-center justify-between gap-6">
-        <p className="text-[clamp(22px,2vw,36px)] font-bold tracking-tight">ÇINARLI</p>
+        <p className="text-[clamp(22px,2vw,36px)] font-bold tracking-tight">ÇİNARLI</p>
         <nav aria-label={ui.nav.language} className="flex items-center gap-4 text-sm uppercase">
           {locales.map((code) => (
             <a

@@ -107,7 +107,7 @@ export const apartmentFilters = [
   },
 ];
 
-// Plans and room areas are from Çınarlı MTK's Instagram posts.
+// Plans and room areas are from Çinarlı MTK's Instagram posts.
 // Building, floor, unit number, status and renovation are placeholders until the real data arrives.
 // `plan` is a key of planImages in src/components/PlanCard.jsx.
 export const apartments = [
@@ -203,6 +203,15 @@ export const apartments = [
   },
 ];
 
+// TEMP: 16 extra test flats (20 in total) to check the picker's scroll. Remove before committing.
+apartments.push(
+  ...Array.from({ length: 16 }, (_, i) => ({
+    ...apartments[i % 4],
+    id: `T-${String(i + 1).padStart(2, "0")}`,
+    status: ["available", "reserved", "sold"][i % 3],
+  })),
+);
+
 export const advantages = {
   titleLines: ["Gündəlik rahatlıq üçün", "düşünülmüş üstünlüklər."],
   description: "Sadəcə bina deyil - ailə həyatı üçün planlanmış mühit.",
@@ -268,7 +277,7 @@ export const gallery = {
     { key: "exteriorTerraces", category: "exterior", alt: "Yaşıl terraslı ağ yaşayış binası" },
     { key: "kitchenMarble", category: "interior", alt: "Mərmər səthli müasir mətbəx" },
     { key: "balconyGlass", category: "outdoor", alt: "Şüşə məhəccərli yaşıl balkon" },
-    { key: "hero", category: "exterior", alt: "Çınarlı Park yaşayış kompleksi" },
+    { key: "hero", category: "exterior", alt: "Çinarlı Park yaşayış kompleksi" },
     { key: "livingRoom", category: "interior", alt: "Minimalist qonaq otağı" },
     { key: "greenery", category: "exterior", alt: "Yaşıl balkonlu müasir yaşayış binası" },
     { key: "bedroom", category: "interior", alt: "Bitkilərlə bəzədilmiş yataq otağı" },
@@ -348,7 +357,7 @@ export const contactPage = {
   titleLines: ["Sualınız var?", "Komandamızla danışın."],
   office: {
     label: "Satış ofisi",
-    name: "Çınarlı Park",
+    name: "Çinarlı Park",
     details: [
       { label: "Telefon", value: "+994 50 000 00 00" },
       { label: "WhatsApp", value: "1 kliklə yazın" },
@@ -445,7 +454,7 @@ export const footer = {
     successMessage:
       "Təşəkkürlər! Satış komandamız tezliklə sizinlə əlaqə saxlayacaq.",
   },
-  copyright: "Çınarlı Park. Bütün hüquqlar qorunur.",
+  copyright: "Çinarlı Park. Bütün hüquqlar qorunur.",
   links: [
     { label: "Layihə", href: "/#layihe" },
     { label: "Mənzillər", href: "/menziller" },
@@ -493,42 +502,42 @@ export const news = [
   }
 ];
 
-// Search results and link previews. Page titles get " | Çınarlı Park" appended (home uses its title as is).
+// Search results and link previews. Page titles get " | Çinarlı Park" appended (home uses its title as is).
 export const seo = {
-  siteName: "Çınarlı Park",
+  siteName: "Çinarlı Park",
   tagline: "Şəhərin içində. Təbiətə daha yaxın.",
   locationLabel: "Bakı, Binəqədi rayonu",
   home: {
-    title: "Çınarlı Park — Bakıda yeni tikili mənzillər",
+    title: "Çinarlı Park — Bakıda yeni tikili mənzillər",
     description:
-      "Çınarlı Park — Bakının Binəqədi rayonunda yaşıl, avtomobilsiz həyətli yeni yaşayış kompleksi. 2 və 3 otaqlı mənzillər, yeraltı parkinq, metroya yaxın.",
+      "Çinarlı Park — Bakının Binəqədi rayonunda yaşıl, avtomobilsiz həyətli yeni yaşayış kompleksi. 2 və 3 otaqlı mənzillər, yeraltı parkinq, metroya yaxın.",
   },
   apartments: {
     title: "Mənzillər — 2 və 3 otaqlı yeni tikili mənzillər",
     description:
-      "Çınarlı Park-da mənzilləri otaq sayı, sahə, mərtəbə və statusa görə seçin: planlar, otaqların sahələri və mövcudluq.",
+      "Çinarlı Park-da mənzilləri otaq sayı, sahə, mərtəbə və statusa görə seçin: planlar, otaqların sahələri və mövcudluq.",
   },
   contact: {
     title: "Əlaqə — satış ofisi",
     description:
-      "Çınarlı Park satış ofisi: telefon, WhatsApp, iş saatları və ünvan. Qiymət, ilkin ödəniş və rezerv barədə tez-tez verilən suallar.",
+      "Çinarlı Park satış ofisi: telefon, WhatsApp, iş saatları və ünvan. Qiymət, ilkin ödəniş və rezerv barədə tez-tez verilən suallar.",
   },
   news: {
     title: "Xəbərlər — tikinti və layihə yenilikləri",
     description:
-      "Çınarlı Park-dan son xəbərlər: tikintinin gedişi, satış ofisi və layihə ilə bağlı yeniliklər.",
+      "Çinarlı Park-dan son xəbərlər: tikintinin gedişi, satış ofisi və layihə ilə bağlı yeniliklər.",
   },
   gallery: {
     title: "Qalereya — layihənin fotoları",
     description:
-      "Çınarlı Park fotoqalereyası: yaşayış binalarının eksteryeri, mənzil interyerləri, balkonlar, həyət və mənzil planları.",
+      "Çinarlı Park fotoqalereyası: yaşayış binalarının eksteryeri, mənzil interyerləri, balkonlar, həyət və mənzil planları.",
   },
 };
 
 export const projectOverview = {
   titleLines: ["Şəhərin içində.", "Təbiətə daha yaxın."],
   description:
-    "Çınarlı Park gündəlik şəhər rahatlığını, ailə həyatı və yaşıllıqla birləşdirən müasir yaşayış kompleksidir.",
+    "Çinarlı Park gündəlik şəhər rahatlığını, ailə həyatı və yaşıllıqla birləşdirən müasir yaşayış kompleksidir.",
   stats: [
     { value: "6", label: "bina" },
     { value: "420", label: "mənzil" },
@@ -555,5 +564,5 @@ export const projectOverview = {
 // "Tikinti rejimi" switch is on. The callback form, phone and copyright come from the sections above.
 export const maintenance = {
   title: "Sayt hazırlanır",
-  text: "Çınarlı Park saytı yenilənir və tezliklə yenidən sizinlə olacaq. Mənzillər haqqında məlumat almaq üçün nömrənizi qoyun, satış komandamız sizinlə əlaqə saxlayacaq.",
+  text: "Çinarlı Park saytı yenilənir və tezliklə yenidən sizinlə olacaq. Mənzillər haqqında məlumat almaq üçün nömrənizi qoyun, satış komandamız sizinlə əlaqə saxlayacaq.",
 };
