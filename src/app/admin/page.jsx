@@ -2,6 +2,7 @@ import AdminApp from "@/components/admin/AdminApp";
 import { requireAdmin } from "@/lib/auth";
 import { translationSeed } from "@/i18n/content";
 import { readLeads } from "@/lib/leads";
+import { isSheetConfigured } from "@/lib/leadSheet";
 import { isMaintenanceOn } from "@/lib/maintenance";
 import { productionData, readStore } from "@/lib/store";
 
@@ -38,6 +39,7 @@ const page = async ({ searchParams }) => {
       }}
       initialLeads={initialLeads}
       leadsError={leadsError}
+      sheetConfigured={isSheetConfigured()}
       initialMode={store.mode}
       initialMaintenance={isMaintenanceOn()}
       initialSavedAt={store.savedAt}

@@ -59,6 +59,7 @@ export default function AdminDashboard({
   initialTranslations,
   initialLeads,
   leadsError = null,
+  sheetConfigured = false,
   initialMode,
   initialMaintenance = false,
   initialSavedAt,
@@ -660,8 +661,10 @@ export default function AdminDashboard({
             <LeadsEditor
               leads={leads}
               loadError={leadsError}
+              sheetConfigured={sheetConfigured}
               onChange={setLeads}
               onError={(text) => showNotice("error", text)}
+              onNotice={(text) => showNotice("success", text)}
             />
           ) : activeSection.key === "news" ? (
             <NewsEditor

@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { checkCredentials, endSession, requireAdmin, startSession } from "@/lib/auth";
 import { deleteLead, readLeads, setLeadStatus } from "@/lib/leads";
+import { isSheetConfigured, syncToSheet } from "@/lib/leadSheet";
 import { clearFailures, clientIp, lockRemaining, recordFailure } from "@/lib/loginLimit";
 import { setMaintenance } from "@/lib/maintenance";
 import { saveData, saveMode } from "@/lib/store";
@@ -97,4 +98,23 @@ export async function markLead(id, status) {
 export async function removeLead(id) {
   await requireAdmin();
   return deleteLead(String(id));
+}
+
+// Sends every lead the Google Sheet doesn't have yet (docs/google-sheets.md). The leads come back
+// in both outcomes: batches that went through before a failure are already recorded.
+export async function syncLeadsToSheet() {
+  await requireAdmin();
+  if (!isSheetConfigured()) {
+    return { error: "Google Sheets qoşulmayıb: serverdə LEADS_SHEET_URL və LEADS_SHEET_SECRET təyin edin." };
+  }
+  try {
+    const sent = await syncToSheet(await readLeads());
+    return { sent, leads: await readLeads() };
+  } catch (error) {
+    console.error("[leads] Google Sheets sync failed", error);
+    return {
+      error: "Google Sheets-ə göndərilmədi. Serverin loqunu və Apps Script yerləşdirməsini yoxlayın.",
+      leads: await readLeads(),
+    };
+  }
 }

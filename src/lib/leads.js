@@ -57,3 +57,16 @@ export const setLeadStatus = (id, status) =>
   );
 
 export const deleteLead = (id) => update((leads) => leads.filter((lead) => lead.id !== id));
+
+/** Records that the Google Sheet has these leads (see ./leadSheet.js); already-recorded ones keep their time. */
+export const markLeadsSynced = (ids, at = new Date().toISOString()) =>
+  update((leads) => {
+    const wanted = new Set(ids);
+    let changed = false;
+    const next = leads.map((lead) => {
+      if (!wanted.has(lead.id) || lead.sheetSyncedAt) return lead;
+      changed = true;
+      return { ...lead, sheetSyncedAt: at };
+    });
+    return changed ? next : leads;
+  });

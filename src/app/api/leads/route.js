@@ -1,4 +1,6 @@
+import { after } from "next/server";
 import { addLead } from "@/lib/leads";
+import { isSheetConfigured, syncToSheet } from "@/lib/leadSheet";
 import { isValidInternationalPhone } from "@/lib/phone";
 import { BodyTooLarge, readJsonBody } from "@/lib/requestBody";
 import { leadClient, limitLead } from "@/lib/leadLimit";
@@ -38,8 +40,9 @@ export async function POST(request) {
     UTM_KEYS.map((key) => [key, text(body.utm?.[key], 100)]).filter(([, value]) => value),
   );
 
+  let saved;
   try {
-    await addLead({
+    saved = await addLead({
       phone,
       source: text(body.source, 40) || "website",
       apartmentId: text(body.apartmentId, 40) || null,
@@ -51,6 +54,14 @@ export async function POST(request) {
   } catch (error) {
     console.error("[lead] could not be saved", error);
     return Response.json({ error: "Göndərmək alınmadı." }, { status: 500 });
+  }
+
+  // The Google Sheets copy (docs/google-sheets.md) runs once the visitor has their answer. A
+  // failure only logs: the lead is saved, and the admin panel's sync button sends it later.
+  if (isSheetConfigured() && !saved.sheetSyncedAt) {
+    after(() =>
+      syncToSheet([saved]).catch((error) => console.error("[lead] copy to Google Sheets failed", error)),
+    );
   }
 
   return Response.json({ ok: true }, { status: 201 });

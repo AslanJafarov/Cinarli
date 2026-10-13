@@ -1,15 +1,10 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { fetchLeads, markLead, removeLead } from "@/app/admin/actions";
+import { fetchLeads, markLead, removeLead, syncLeadsToSheet } from "@/app/admin/actions";
 import { buttonClass, Icon, IconButton } from "./ui";
 import { csvCell } from "../../lib/csv";
-
-const SOURCES = { footer: "Footer forması", apartment: "Mənzil səhifəsi", appointment: "Görüş sorğusu", calculator: "Kalkulyator" };
-const LANGUAGES = { az: "AZ", ru: "RU", en: "EN" };
-
-const formatPhone = (phone) =>
-  phone.replace(/^\+994(\d{2})(\d{3})(\d{2})(\d{2})$/, "+994 $1 $2 $3 $4");
+import { LANGUAGES, SOURCES, formatPhone } from "../../lib/leadLabels";
 
 const formatDate = (iso) =>
   new Date(iso).toLocaleString("az-AZ", { dateStyle: "short", timeStyle: "short" });
@@ -46,11 +41,23 @@ function exportCsv(leads) {
   URL.revokeObjectURL(url);
 }
 
-/** Leads from the website forms. Status changes and deletions are saved right away. */
-export default function LeadsEditor({ leads, loadError = null, onChange, onError }) {
+/**
+ * Leads from the website forms. Status changes and deletions are saved right away.
+ * `sheetConfigured`: the server copies leads to a Google Sheet (docs/google-sheets.md), so the
+ * panel offers to send the ones that aren't there yet.
+ */
+export default function LeadsEditor({
+  leads,
+  loadError = null,
+  sheetConfigured = false,
+  onChange,
+  onError,
+  onNotice,
+}) {
   const [filter, setFilter] = useState("new");
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [refreshing, startRefresh] = useTransition();
+  const [syncing, startSync] = useTransition();
 
   const refresh = () =>
     startRefresh(async () => {
@@ -58,6 +65,19 @@ export default function LeadsEditor({ leads, loadError = null, onChange, onError
         onChange(await fetchLeads());
       } catch {
         onError("Müraciətlər yenilənmədi.");
+      }
+    });
+
+  const syncSheet = () =>
+    startSync(async () => {
+      try {
+        const result = await syncLeadsToSheet();
+        if (result.leads) onChange(result.leads);
+        if (result.error) onError(result.error);
+        else if (result.sent === 0) onNotice("Bütün müraciətlər artıq Google Sheets-dədir.");
+        else onNotice(`${result.sent} müraciət Google Sheets-ə göndərildi.`);
+      } catch {
+        onError("Google Sheets-ə göndərilmədi. Yenidən cəhd edin.");
       }
     });
 
@@ -82,6 +102,7 @@ export default function LeadsEditor({ leads, loadError = null, onChange, onError
   };
 
   const newCount = leads.filter((lead) => lead.status !== "done").length;
+  const notInSheet = leads.filter((lead) => !lead.sheetSyncedAt).length;
   const visible = filter === "new" ? leads.filter((lead) => lead.status !== "done") : leads;
 
   return (
@@ -122,6 +143,18 @@ export default function LeadsEditor({ leads, loadError = null, onChange, onError
           >
             <Icon name="download" /> Excel (CSV)
           </button>
+          {sheetConfigured && (
+            <button
+              type="button"
+              onClick={syncSheet}
+              disabled={syncing}
+              title={notInSheet === 0 ? "Bütün müraciətlər Google Sheets-dədir" : `${notInSheet} müraciət hələ cədvəldə deyil`}
+              className={buttonClass.secondary}
+            >
+              <Icon name="external" />
+              {syncing ? "Göndərilir…" : notInSheet === 0 ? "Google Sheets" : `Google Sheets-ə göndər (${notInSheet})`}
+            </button>
+          )}
         </div>
       </div>
 
