@@ -8,7 +8,7 @@ import { getSiteData } from "../lib/store";
 
 // Phones: the four smaller photos become a 2×2 grid of squares.
 const tileClass =
-  "relative aspect-[4/3] overflow-hidden rounded-[clamp(14px,1.5vw,30px)] bg-[#e4e1d9] max-sm:aspect-square max-sm:rounded-[20px] lg:aspect-auto";
+  "relative aspect-[4/3] overflow-hidden rounded-[clamp(14px,1.5vw,30px)] bg-[#e4e1d9] max-sm:aspect-square max-sm:rounded-[20px] lg:aspect-auto lg:h-full lg:min-h-0";
 
 function GalleryImage({ image, sizes }) {
   return (
@@ -63,7 +63,7 @@ export default async function Gallery() {
         />
       ) : (
       <div
-        className={`mt-[clamp(28px,4.25vw,82px)] grid gap-[clamp(12px,1.85vw,36px)] lg:aspect-[1821/648] ${
+        className={`mt-[clamp(28px,4.25vw,82px)] grid gap-[clamp(12px,1.85vw,36px)] lg:aspect-[1821/648] lg:grid-rows-[minmax(0,1fr)] ${
           rows.length > 0 ? "lg:grid-cols-[688fr_1096fr]" : ""
         }`}
       >
@@ -92,14 +92,14 @@ export default async function Gallery() {
         {/* With fewer than five photos, the remaining ones fill the space they have. */}
         {rows.length > 0 && (
         <div
-          className={`grid gap-[clamp(12px,1.85vw,36px)] ${
-            rows.length > 1 ? "lg:grid-rows-[318fr_293fr]" : ""
+          className={`grid gap-[clamp(12px,1.85vw,36px)] lg:h-full lg:min-h-0 ${
+            rows.length > 1 ? "lg:grid-rows-[minmax(0,318fr)_minmax(0,293fr)]" : "lg:grid-rows-[minmax(0,1fr)]"
           }`}
         >
           {rows.map((row, rowIndex) => (
             <div
               key={rowIndex}
-              className={`grid gap-[clamp(12px,1.85vw,36px)] max-sm:grid-cols-2 ${
+              className={`grid gap-[clamp(12px,1.85vw,36px)] max-sm:grid-cols-2 lg:min-h-0 ${
                 row.length > 1 ? rowColumns[rowIndex] : ""
               }`}
             >
